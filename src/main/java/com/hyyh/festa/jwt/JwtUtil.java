@@ -14,6 +14,10 @@ public class JwtUtil {
 
     }
 
+    public void validateKakaoOpenId(String idToken) throws Exception {
+
+    }
+
     public String extractUsertype(String token) {
 
     }
