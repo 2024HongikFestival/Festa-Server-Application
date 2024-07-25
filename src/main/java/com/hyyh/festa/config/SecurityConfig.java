@@ -1,27 +1,32 @@
 package com.hyyh.festa.config;
 
-import com.hyyh.festa.service.AuthenticationService;
+import com.hyyh.festa.domain.AdminUser;
+import com.hyyh.festa.jwt.JwtAuthenticationFilter;
+import com.hyyh.festa.repository.AdminUserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+    private final AdminUserRepository adminUserRepository;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http
@@ -29,8 +34,8 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/admin/login").permitAll()
-                        .requestMatchers("/admin/register").permitAll());
+                        .requestMatchers("/admin/login").permitAll())
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
@@ -45,14 +50,18 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        // for test
-        UserDetails adminUser = User.builder()
+    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+        // ‼️ for test
+        // ‼️ for test
+        AdminUser adminUser = AdminUser.builder()
                 .username("admin")
-                .password("{bcrypt}$2a$12$EtpVykEKqy9Jt4PfFQcgX.L/xwuPWVr1Nk/xP84zp0xtIKPqRBKOe") // 0000
-                .roles("ADMIN")
+                .password(passwordEncoder.encode("0000"))
                 .build();
-        return new InMemoryUserDetailsManager(adminUser);
+        adminUserRepository.save(adminUser);
+
+        return username -> adminUserRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("유저가 없다는 메시지"));
     }
 
     @Bean

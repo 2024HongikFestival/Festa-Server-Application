@@ -12,14 +12,17 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
-    public AdminUser loginAdminUser(String username, String password) {
-        return null;
-    }
 
     public UserDetails authenticateAdminUser(String username, String password) {
         UsernamePasswordAuthenticationToken authenticateToken =
                 UsernamePasswordAuthenticationToken.unauthenticated(username, password);
-        Authentication authenticate = authenticationManager.authenticate(authenticateToken);
+
+        Authentication authenticate = null;
+        try {
+            authenticate = authenticationManager.authenticate(authenticateToken);
+        } catch (Exception e) {
+            return null;
+        }
         return (UserDetails) authenticate.getPrincipal();
     }
 }
