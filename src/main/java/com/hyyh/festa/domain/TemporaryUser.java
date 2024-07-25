@@ -1,8 +1,6 @@
 package com.hyyh.festa.domain;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,33 +15,27 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdminUser implements UserDetails {
+public class TemporaryUser implements UserDetails {
     @Id
-    @GeneratedValue
-    private Long id;
-
-    @Column(unique = true)
-    private String username;
-
-    private String password;
+    private String subject;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new GrantedAuthority() {
             @Override
             public String getAuthority() {
-                return "ADMIN";
+                return "TEMP";
             }
         });
     }
 
     @Override
     public String getPassword() {
-        return password;
+        return null;
     }
 
     @Override
     public String getUsername() {
-        return username;
+        return subject;
     }
 }
