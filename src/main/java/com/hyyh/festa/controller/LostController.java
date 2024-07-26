@@ -1,25 +1,24 @@
 package com.hyyh.festa.controller;
 
-import com.hyyh.festa.dto.PostDTO;
-import com.hyyh.festa.service.PostService;
+import com.hyyh.festa.dto.LostDTO;
+import com.hyyh.festa.service.LostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @RestController
-@RequestMapping("/posts")
-public class PostController {
+@RequestMapping("/losts")
+public class LostController {
 
     @Autowired
-    private PostService postService;
+    private LostService lostService;
 
     //[POST] 분실물 게시글 등록 api
     @PostMapping
-    public ResponseEntity<?> createPost(@RequestBody PostDTO postDTO){
+    public ResponseEntity<?> createLost(@RequestBody LostDTO lostDTO){
 
         return ResponseEntity.ok().body("TEST"); //구현시, ResponseDTO 객체가 들어가야함
 
@@ -27,7 +26,7 @@ public class PostController {
 
     //[GET] 분실물 게시글 리스트 조회 api
     @GetMapping
-    public ResponseEntity<?> getPosts(
+    public ResponseEntity<?> getLosts(
             @RequestParam(required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestParam(defaultValue = "0")int page){
 
@@ -35,20 +34,18 @@ public class PostController {
     }
 
     //[GET] 분실물 게시글 단일 조회 api
-    @GetMapping("/{postId}")
-    public ResponseEntity<?> getOnePost(@PathVariable long postId){
+    @GetMapping("/{lostId}")
+    public ResponseEntity<?> getOneLost(@PathVariable long lostId){
 
         return ResponseEntity.ok().body("TEST");
     }
 
     //[DELETE] 분실물 게시글 삭제 api
-    @DeleteMapping("/{postId}") //구현 방법 다시 생각해봐야 할 것 같다.
-    public ResponseEntity<?> deleteOnePost(@PathVariable long postId){
+    @DeleteMapping("/{lostId}") //구현 방법 다시 생각해봐야 할 것 같다.
+    public ResponseEntity<?> deleteOneLost(@PathVariable long lostId){
 
         return ResponseEntity.ok().body("TEST");
     }
-
-    //[POST] 분실물 사진 등록 api (프론트와 상의 후 개발)
 
 
 

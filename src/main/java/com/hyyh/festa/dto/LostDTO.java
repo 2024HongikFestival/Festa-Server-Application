@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class PostDTO {
+public class LostDTO {
 
     private String foundLocation;
     private String storageLocation;
