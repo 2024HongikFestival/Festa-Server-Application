@@ -1,7 +1,6 @@
 package com.hyyh.festa.service;
 
 import com.hyyh.festa.domain.FestaUser;
-import com.hyyh.festa.jwt.JwtUtil;
 import com.hyyh.festa.oidc.OidcUtil;
 import com.hyyh.festa.repository.FestaUserRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final FestaUserRepository festaUserRepository;
-    private final JwtUtil jwtUtil;
     private final OidcUtil oidcUtil;
 
     public UserDetails authenticateAdminUser(String username, String password) {
@@ -33,14 +31,23 @@ public class AuthenticationService {
     }
 
     public UserDetails authenticateFestaUser(String code) {
-        // kakao oidc 인증
-        String testKakaoSub = "1234567890";
+        String kakaoSub = null;
+        try {
+            String idToken = oidcUtil.generateKakaoIdToken(code);
+            kakaoSub = oidcUtil.extractSubFromKakaoIdToken(idToken);
+        } catch (Exception e) {
+            return null;
+        }
 
-        FestaUser festaUser = FestaUser.builder()
-                .kakaoSub(testKakaoSub)
-                .build();
-        festaUserRepository.save(festaUser);
-
-        return (UserDetails) festaUser;
+        FestaUser festaUser = festaUserRepository
+                .findByKakaoSub(kakaoSub)
+                .orElse(null);
+        if (festaUser == null) {
+            festaUser = FestaUser.builder()
+                    .kakaoSub(kakaoSub)
+                    .build();
+            festaUserRepository.save(festaUser);
+        }
+        return festaUser;
     }
 }

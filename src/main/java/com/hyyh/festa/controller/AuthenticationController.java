@@ -1,18 +1,13 @@
 package com.hyyh.festa.controller;
 
-import com.hyyh.festa.domain.FestaUser;
 import com.hyyh.festa.dto.KakaoLoginRequest;
 import com.hyyh.festa.dto.LoginRequest;
 import com.hyyh.festa.dto.TokenResponse;
 import com.hyyh.festa.jwt.JwtUtil;
-import com.hyyh.festa.oidc.OidcUtil;
-import com.hyyh.festa.repository.FestaUserRepository;
 import com.hyyh.festa.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
-    private final FestaUserRepository festaUserRepository;
     private final JwtUtil jwtUtil;
 
     @PostMapping("/admin/login")
