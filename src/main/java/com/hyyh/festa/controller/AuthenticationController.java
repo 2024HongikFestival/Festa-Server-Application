@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -31,11 +32,42 @@ public class AuthenticationController {
         if (adminUser != null) {
             return ResponseEntity
                     .status(200)
-                    .body(new TokenResponse(jwtUtil.generateToken(adminUser)));
+                    .body(new TokenResponse(
+                            "어드민 인가 토큰 발급",
+                            jwtUtil.generateToken(adminUser)));
         } else {
             return ResponseEntity
                     .status(401)
                     .body("인증이 실패했다는 메시지");
         }
+    }
+
+    @PostMapping("/posts/token")
+    public ResponseEntity<?> authenticatePostLost(@RequestBody KakaoLoginRequest kakaoLoginRequest) {
+        UserDetails festaUser =
+                authenticationService.authenticateFestaUser(kakaoLoginRequest.getCode());
+        if (festaUser != null) {
+            return ResponseEntity
+                    .status(200)
+                    .body(new TokenResponse(
+                            "분실물 게시 토큰 발급",
+                            jwtUtil.generateToken(festaUser)));
+        } else {
+            return ResponseEntity
+                    .status(401)
+                    .body("인증이 실패했다는 메시지");
+        }
+    }
+
+    @PostMapping("/events/{eventId}/token")
+    public ResponseEntity<?> authenticateEvent(@RequestParam Long eventId, @RequestBody KakaoLoginRequest kakaoLoginRequest) {
+        // todo: 이벤트 등록 등 처리
+        // 카카오 OIDC 인증
+        // 해당 사용자 없다면 등록
+        // 해당 사용자가 응모 가능한지 판정
+
+        return ResponseEntity
+                .status(200)
+                .body("TODO");
     }
 }

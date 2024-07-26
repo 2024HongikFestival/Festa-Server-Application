@@ -11,9 +11,9 @@ public class TokenResponse {
     private String message;
     private List<?> data;
 
-    public TokenResponse(String token) {
+    public TokenResponse(String message, String token) {
         this.status = 200;
-        this.message = "어드민 인가 토큰 발급";
+        this.message = message;
         this.data = List.of(new inner(token));
     }
 

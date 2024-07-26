@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class KakaoLoginRequest {
 
-    private String accessCode;
+    private String code;
 
 }
