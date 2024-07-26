@@ -92,4 +92,17 @@ public class JwtUtil {
         }
     }
 
+    public String extractSubject(String token) {
+        try {
+            return Jwts.parser()
+                    .verifyWith(secretKey)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .getSubject();
+        } catch (JwtException | IllegalArgumentException e) {
+            return null;
+        }
+    }
+
 }

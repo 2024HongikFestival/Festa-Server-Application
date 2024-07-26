@@ -23,8 +23,6 @@ public class FestaUser implements UserDetails {
 
     private String kakaoSub;
 
-    private String password;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(
@@ -39,7 +37,7 @@ public class FestaUser implements UserDetails {
 
     @Override
     public String getPassword() {
-        return password;
+        return null;
     }
 
     @Override

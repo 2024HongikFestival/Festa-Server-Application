@@ -1,5 +1,6 @@
 package com.hyyh.festa.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -21,6 +22,7 @@ public class AdminUser implements UserDetails {
     @GeneratedValue
     private Long id;
 
+    @Column(unique = true)
     private String username;
 
     private String password;

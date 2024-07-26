@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
@@ -22,6 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final AdminUserRepository adminUserRepository;
@@ -35,8 +37,8 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin/login").permitAll()
-                        .requestMatchers("/kakao/login").permitAll()
-                )
+                        .requestMatchers("/posts/token").permitAll()
+                        .requestMatchers("/test").authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

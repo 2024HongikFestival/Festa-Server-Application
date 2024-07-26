@@ -8,9 +8,9 @@ import com.hyyh.festa.repository.KakaoPublicKeyRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -37,38 +37,18 @@ import java.util.Date;
 @Service
 @RequiredArgsConstructor
 public class OidcUtil {
-    private static final String REST_API_KEY = "2f3d082cf01130dd3a9ced2eb17c92fd";
-    private static final String REST_API_SECRET = "5eyYM5Esv2v4IlB1moPxEhJiVJfleaoF";
-    private static final String REDIRECT_URI = "http://localhost:8080/login/oauth2/code/kakao";
+    @Value("${KAKAO_REST_API_KEY}")
+    private String REST_API_KEY;
+
+    @Value("${KAKAO_REST_API_SECRET}")
+    private String REST_API_SECRET;
+
+    @Value("${KAKAO_REST_API_REDIRECT_URI}")
+    private String REDIRECT_URI;
+
     private final KakaoPublicKeyRepository kakaoPublicKeyRepository;
 
     public String generateKakaoIdToken(String accessCode) throws JsonProcessingException {
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
-//
-//        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-//        body.add("grant_type", "authorization_code");
-//        body.add("client_id", REST_API_KEY);
-//        body.add("redirect_uri", REDIRECT_URI);
-//        body.add("code", accessCode);
-//        body.add("client_secret", REST_API_SECRET);
-//
-//        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(body, headers);
-//        RestTemplate rt = new RestTemplate();
-//        ResponseEntity<String> response = rt.exchange(
-//                "https://kauth.kakao.com/oauth/token",
-//                HttpMethod.POST,
-//                kakaoTokenRequest,
-//                String.class
-//        );
-//
-//        String responseBody = response.getBody();
-//        ObjectMapper objectMapper = new ObjectMapper();
-//
-//        JsonNode jsonNode = objectMapper.readTree(responseBody);
-//
-//        return jsonNode.get("id_token").asText();
-//
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
@@ -129,12 +109,6 @@ public class OidcUtil {
     }
 
     private String getKidFromToken(String idToken) throws Exception {
-//        String[] idTokenParts = idToken.split("\\.");
-//        String headerJson = new String(Base64.getUrlDecoder().decode(idTokenParts[0]));
-//        ObjectMapper mapper = new ObjectMapper();
-//        JsonNode header = mapper.readTree(headerJson);
-//        return header.get("kid").asText();
-
         if (idToken == null || idToken.split("\\.").length != 3) {
             throw new IllegalArgumentException("유효하지 않은 토큰 형식입니다.");
         }
@@ -174,12 +148,6 @@ public class OidcUtil {
     }
 
     private PublicKey createPublicKey(String n, String e) throws Exception {
-//        byte[] nBytes = Decoders.BASE64URL.decode(n);
-//        byte[] eBytes = Decoders.BASE64URL.decode(e);
-//        RSAPublicKeySpec spec = new RSAPublicKeySpec(new java.math.BigInteger(1, nBytes), new java.math.BigInteger(1, eBytes));
-//        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-//        return keyFactory.generatePublic(spec);
-//
         try {
             byte[] nBytes = Base64.getUrlDecoder().decode(n);
             byte[] eBytes = Base64.getUrlDecoder().decode(e);
