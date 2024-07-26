@@ -2,7 +2,6 @@ package com.hyyh.festa.jwt;
 
 import com.hyyh.festa.domain.AdminUser;
 import com.hyyh.festa.repository.AdminUserRepository;
-import com.hyyh.festa.repository.TemporaryUserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +19,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final AdminUserRepository adminUserRepository;
-    private final TemporaryUserRepository temporaryUserRepository;
     private final JwtUtil jwtUtil;
 
     @Override
