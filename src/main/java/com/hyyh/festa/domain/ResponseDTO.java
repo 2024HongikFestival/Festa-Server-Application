@@ -32,6 +32,13 @@ public class ResponseDTO<T> {
     public static <T> ResponseDTO<T> internalServerError(String message) {
         return new ResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), message, null);
     }
+    public static <T> ResponseDTO<T> unauthorized(String message) {
+        return new ResponseDTO<>(HttpStatus.UNAUTHORIZED.value(), message, null);
+    }
+
+    public static <T> ResponseDTO<T> forbidden(String message) {
+        return new ResponseDTO<>(HttpStatus.FORBIDDEN.value(), message, null);
+    }
 
     // 사용자 정의 HttpStatus 처리
     public static <T> ResponseDTO<T> custom(HttpStatus status, String message, T data) {
