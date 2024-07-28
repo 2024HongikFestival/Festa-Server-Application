@@ -8,10 +8,7 @@ import com.hyyh.festa.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,8 +16,8 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
     private final JwtUtil jwtUtil;
 
-    @PostMapping("/admin/login")
-    public ResponseEntity<?> loginAdminUser(@RequestBody LoginRequest loginRequest) {
+    @PostMapping("/admin/token")
+    public ResponseEntity<?> authenticateAdminUser(@RequestBody LoginRequest loginRequest) {
         UserDetails adminUser =
                 authenticationService.authenticateAdminUser(loginRequest.getUsername(), loginRequest.getPassword());
         if (adminUser != null) {
@@ -54,14 +51,22 @@ public class AuthenticationController {
     }
 
     @PostMapping("/events/{eventId}/token")
-    public ResponseEntity<?> authenticateEvent(@RequestParam Long eventId, @RequestBody KakaoLoginRequest kakaoLoginRequest) {
-        // todo: 이벤트 등록 등 처리
-        // 카카오 OIDC 인증
-        // 해당 사용자 없다면 등록
-        // 해당 사용자가 응모 가능한지 판정
-
-        return ResponseEntity
-                .status(200)
-                .body("TODO");
+    public ResponseEntity<?> authenticateEvent(@PathVariable Long eventId, @RequestBody KakaoLoginRequest kakaoLoginRequest) {
+        UserDetails festaUser =
+                authenticationService.authenticateFestaUser(kakaoLoginRequest.getCode());
+        if (festaUser == null) {
+            return ResponseEntity
+                    .status(401)
+                    .body("인증이 실패했다는 메시지");
+        }
+        if (!authenticationService.isEventApplicable(festaUser, eventId)) {
+            return ResponseEntity
+                    .status(400)
+                    .body("응모가 불가능하다는 메시지");
+        } else {
+            return ResponseEntity
+                    .status(200)
+                    .body(jwtUtil.generateToken(festaUser));
+        }
     }
 }

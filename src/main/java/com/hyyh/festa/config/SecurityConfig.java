@@ -36,9 +36,12 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/admin/login").permitAll()
+                        .requestMatchers("/admin/token").permitAll()
                         .requestMatchers("/posts/token").permitAll()
-                        .requestMatchers("/test").authenticated())
+                        .requestMatchers("/events/*/token").permitAll()
+                        .requestMatchers("/test").authenticated()
+                        .requestMatchers("/test/admin").hasAuthority("ADMIN")
+                        .requestMatchers("/test/user").hasAuthority("USER"))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

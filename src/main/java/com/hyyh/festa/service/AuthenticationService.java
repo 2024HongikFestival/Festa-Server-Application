@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -21,13 +22,13 @@ public class AuthenticationService {
         UsernamePasswordAuthenticationToken authenticateToken =
                 UsernamePasswordAuthenticationToken.unauthenticated(username, password);
 
-        Authentication authenticate = null;
+        Authentication authentication = null;
         try {
-            authenticate = authenticationManager.authenticate(authenticateToken);
-        } catch (Exception e) {
+            authentication = authenticationManager.authenticate(authenticateToken);
+        } catch (AuthenticationException e) {
             return null;
         }
-        return (UserDetails) authenticate.getPrincipal();
+        return (UserDetails) authentication.getPrincipal();
     }
 
     public UserDetails authenticateFestaUser(String code) {
@@ -49,5 +50,9 @@ public class AuthenticationService {
             festaUserRepository.save(festaUser);
         }
         return festaUser;
+    }
+
+    public boolean isEventApplicable(UserDetails festaUser, Long eventId) {
+        return true;
     }
 }
