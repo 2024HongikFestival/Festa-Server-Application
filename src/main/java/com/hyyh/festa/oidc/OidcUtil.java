@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hyyh.festa.domain.KakaoPublicKey;
+import com.hyyh.festa.domain.TokenType;
 import com.hyyh.festa.repository.KakaoPublicKeyRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -43,19 +44,27 @@ public class OidcUtil {
     @Value("${KAKAO_REST_API_SECRET}")
     private String REST_API_SECRET;
 
-    @Value("${KAKAO_REST_API_REDIRECT_URI}")
-    private String REDIRECT_URI;
+    @Value("${KAKAO_REST_API_ENTRY_REDIRECT_URI}")
+    private String ENTRY_REDIRECT_URI;
+
+    @Value("${KAKAO_REST_API_LOST_REDIRECT_URI}")
+    private String LOST_REDIRECT_URI;
 
     private final KakaoPublicKeyRepository kakaoPublicKeyRepository;
 
-    public String generateKakaoIdToken(String accessCode) throws JsonProcessingException {
+    public String generateKakaoIdToken(String accessCode, TokenType tokenType) throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", REST_API_KEY);
-        body.add("redirect_uri", REDIRECT_URI);
+        if (tokenType == TokenType.ENTRY) {
+            body.add("redirect_uri", ENTRY_REDIRECT_URI);
+        }
+        else if (tokenType == TokenType.LOST) {
+            body.add("redirect_uri", LOST_REDIRECT_URI);
+        }
         body.add("code", accessCode);
         body.add("client_secret", REST_API_SECRET);
 

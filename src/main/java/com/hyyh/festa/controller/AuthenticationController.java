@@ -1,14 +1,17 @@
 package com.hyyh.festa.controller;
 
+import com.hyyh.festa.domain.TokenType;
 import com.hyyh.festa.dto.KakaoLoginRequest;
 import com.hyyh.festa.dto.LoginRequest;
 import com.hyyh.festa.dto.TokenResponse;
 import com.hyyh.festa.jwt.JwtUtil;
+import com.hyyh.festa.oidc.KakaoErrorException;
 import com.hyyh.festa.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,8 +38,25 @@ public class AuthenticationController {
 
     @PostMapping("/posts/token")
     public ResponseEntity<?> authenticatePostLost(@RequestBody KakaoLoginRequest kakaoLoginRequest) {
-        UserDetails festaUser =
-                authenticationService.authenticateFestaUser(kakaoLoginRequest.getCode());
+        UserDetails festaUser;
+        try {
+            festaUser = authenticationService.authenticateFestaUser(kakaoLoginRequest.getCode(), TokenType.LOST);
+        } catch (KakaoErrorException e) {
+            String errorCode = e.getErrorCode();
+            String errorDesc;
+            if (Objects.equals(errorCode, "KOE320")) {
+                errorDesc = "만료된 인가코드입니다. 인가 코드는 일회용입니다.";
+            }
+            else if (Objects.equals(errorCode, "KOE303")) {
+                errorDesc = "잘못된 redirect URI입니다. 요청할 토큰 종류와 redirect URI가 잘 맞는지 확인하세요.";
+            }
+            else {
+                errorDesc = "예상치 못한 오류입니다.";
+            }
+            return ResponseEntity
+                    .status(401)
+                    .body(e.getMessage() + "\n" + errorDesc);
+        }
         if (festaUser != null) {
             return ResponseEntity
                     .status(200)
@@ -52,8 +72,25 @@ public class AuthenticationController {
 
     @PostMapping("/events/{eventId}/token")
     public ResponseEntity<?> authenticateEvent(@PathVariable Long eventId, @RequestBody KakaoLoginRequest kakaoLoginRequest) {
-        UserDetails festaUser =
-                authenticationService.authenticateFestaUser(kakaoLoginRequest.getCode());
+        UserDetails festaUser;
+        try {
+            festaUser = authenticationService.authenticateFestaUser(kakaoLoginRequest.getCode(), TokenType.ENTRY);
+        } catch (KakaoErrorException e) {
+            String errorCode = e.getErrorCode();
+            String errorDesc;
+            if (Objects.equals(errorCode, "KOE320")) {
+                errorDesc = "만료된 인가코드입니다. 인가 코드는 일회용입니다.";
+            }
+            else if (Objects.equals(errorCode, "KOE303")) {
+                errorDesc = "잘못된 redirect URI입니다. 요청할 토큰 종류와 redirect URI가 잘 맞는지 확인하세요.";
+            }
+            else {
+                errorDesc = "예상치 못한 오류입니다.";
+            }
+            return ResponseEntity
+                    .status(401)
+                    .body(e.getMessage() + "\n" + errorDesc);
+        }
         if (festaUser == null) {
             return ResponseEntity
                     .status(401)
