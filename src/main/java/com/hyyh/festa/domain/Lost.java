@@ -23,7 +23,7 @@ public class Lost {
     private String foundLocation; //발견 장소
     private String storageLocation; //보관 장소
     private String content; //본문
-    private String photoUrl; //사진 url
+    private String imageUrl; //사진 url
 
     @CreatedDate
     private LocalDateTime createdAt; //작성 시간

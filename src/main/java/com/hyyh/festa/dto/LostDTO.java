@@ -12,5 +12,5 @@ public class LostDTO {
     private String foundLocation;
     private String storageLocation;
     private String content;
-    private String photoUrl;
+    private String imageUrl;
 }
