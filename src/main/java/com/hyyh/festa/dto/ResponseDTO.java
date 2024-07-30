@@ -1,4 +1,4 @@
-package com.hyyh.festa.domain;
+package com.hyyh.festa.dto;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
