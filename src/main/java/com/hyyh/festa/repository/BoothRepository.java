@@ -1,6 +1,7 @@
 package com.hyyh.festa.repository;
 
 import com.hyyh.festa.domain.booth.Booth;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -8,4 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface BoothRepository extends JpaRepository<Booth, Long> {
 
     Booth findByBoothName(String boothName);
+
+    List<Booth> findAll();
 }
