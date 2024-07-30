@@ -11,12 +11,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Data
-public class getUserLostDTO {
+public class GetAdminLostDTO {
 
     private long lostId;
+    private String userId;
     private String foundLocation;
     private String storageLocation;
     private String content;
     private String imageUrl;
     private LocalDateTime createdAt;
+
 }
