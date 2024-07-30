@@ -1,9 +1,6 @@
 package com.hyyh.festa.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -11,6 +8,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Data
+@Builder
 public class GetUserLostDTO {
 
     private long lostId;
