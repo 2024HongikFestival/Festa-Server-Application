@@ -1,12 +1,14 @@
 package com.hyyh.festa.controller;
 
 import com.hyyh.festa.domain.TokenType;
+import com.hyyh.festa.dto.EventKakaoRequest;
 import com.hyyh.festa.dto.KakaoLoginRequest;
 import com.hyyh.festa.dto.LoginRequest;
 import com.hyyh.festa.dto.TokenResponse;
 import com.hyyh.festa.jwt.JwtUtil;
 import com.hyyh.festa.oidc.KakaoErrorException;
 import com.hyyh.festa.service.AuthenticationService;
+import com.hyyh.festa.service.ValidationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +19,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
+    private final ValidationService validationService;
     private final JwtUtil jwtUtil;
 
     @PostMapping("/admin/token")
@@ -71,10 +74,10 @@ public class AuthenticationController {
     }
 
     @PostMapping("/events/{eventId}/token")
-    public ResponseEntity<?> authenticateEvent(@PathVariable Long eventId, @RequestBody KakaoLoginRequest kakaoLoginRequest) {
+    public ResponseEntity<?> authenticateEvent(@PathVariable Long eventId, @RequestBody EventKakaoRequest eventKakaoRequest) {
         UserDetails festaUser;
         try {
-            festaUser = authenticationService.authenticateFestaUser(kakaoLoginRequest.getCode(), TokenType.ENTRY);
+            festaUser = authenticationService.authenticateFestaUser(eventKakaoRequest.getCode(), TokenType.ENTRY);
         } catch (KakaoErrorException e) {
             String errorCode = e.getErrorCode();
             String errorDesc;
@@ -96,11 +99,17 @@ public class AuthenticationController {
                     .status(401)
                     .body("인증이 실패했다는 메시지");
         }
-        if (!authenticationService.isEventApplicable(festaUser, eventId)) {
+        if (!validationService.isEventApplicable(eventId)) {
             return ResponseEntity
                     .status(400)
                     .body("응모가 불가능하다는 메시지");
-        } else {
+        }
+        else if (!validationService.isWithinArea(eventKakaoRequest.getLatitude(),eventKakaoRequest.getLongtitude())) {
+            return ResponseEntity
+                    .status(400)
+                    .body("위치 검증에 실패했다는 메시지");
+        }
+        else {
             return ResponseEntity
                     .status(200)
                     .body(jwtUtil.generateToken(festaUser));
