@@ -39,7 +39,7 @@ public class AuthenticationController {
         }
     }
 
-    @PostMapping("/posts/token")
+    @PostMapping("/losts/token")
     public ResponseEntity<?> authenticatePostLost(@RequestBody KakaoLoginRequest kakaoLoginRequest) {
         UserDetails festaUser;
         try {
