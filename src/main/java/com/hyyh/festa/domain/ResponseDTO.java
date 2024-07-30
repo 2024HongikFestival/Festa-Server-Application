@@ -8,9 +8,9 @@ public class ResponseDTO<T> {
 
     private final int status;
     private final String message;
-    private final T data;
+    private final Object data;
 
-    private ResponseDTO(int status, String message, T data) {
+    private ResponseDTO(int status, String message, Object data) {
         this.status = status;
         this.message = message;
         this.data = data;
