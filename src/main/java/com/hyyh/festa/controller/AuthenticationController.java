@@ -60,22 +60,21 @@ public class AuthenticationController {
                     .status(401)
                     .body(e.getMessage() + "\n" + errorDesc);
         }
-        if (festaUser != null) {
-            if(!validationService.isUserBlacklist(festaUser.getUsername())){
-                return ResponseEntity
-                        .status(400)
-                        .body("해당 사용자가 블랙리스트에 있습니다.");
-            }
-            return ResponseEntity
-                    .status(200)
-                    .body(new TokenResponse(
-                            "분실물 게시 토큰 발급",
-                            jwtUtil.generateToken(festaUser)));
-        } else {
+        if (festaUser == null) {
             return ResponseEntity
                     .status(401)
                     .body("인증이 실패했다는 메시지");
         }
+        if (validationService.isUserBlacklist(festaUser.getUsername())) {
+            return ResponseEntity
+                    .status(400)
+                    .body("해당 사용자가 블랙리스트에 있습니다.");
+        }
+        return ResponseEntity
+                .status(200)
+                .body(new TokenResponse(
+                        "분실물 게시 토큰 발급",
+                        jwtUtil.generateToken(festaUser)));
     }
 
     @PostMapping("/events/{eventId}/token")
