@@ -16,12 +16,12 @@ public class LostService {
 
     private final LostRepository lostRepository;
 
-    public Optional<GetAdminLostDTO> getOneAdminLost(long lostId) {
+    public Optional<GetAdminLostDTO> getOneAdminLost(Long lostId) {
         return lostRepository.findById(lostId)
                 .map(this::mapToAdminDTO);
     }
 
-    public Optional<GetUserLostDTO> getOneUserLost(long lostId) {
+    public Optional<GetUserLostDTO> getOneUserLost(Long lostId) {
         return lostRepository.findById(lostId)
                 .map(this::mapToUserDTO);
     }

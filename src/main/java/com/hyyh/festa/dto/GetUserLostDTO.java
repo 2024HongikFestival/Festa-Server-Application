@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Builder
 public class GetUserLostDTO {
 
-    private long lostId;
+    private Long lostId;
     private String foundLocation;
     private String storageLocation;
     private String content;
