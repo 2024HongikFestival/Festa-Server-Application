@@ -61,6 +61,11 @@ public class AuthenticationController {
                     .body(e.getMessage() + "\n" + errorDesc);
         }
         if (festaUser != null) {
+            if(!validationService.isUserBlacklist(festaUser.getUsername())){
+                return ResponseEntity
+                        .status(400)
+                        .body("해당 사용자가 블랙리스트에 있습니다.");
+            }
             return ResponseEntity
                     .status(200)
                     .body(new TokenResponse(

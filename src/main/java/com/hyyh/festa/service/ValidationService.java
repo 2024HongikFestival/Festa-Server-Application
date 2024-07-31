@@ -9,7 +9,8 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class ValidationService {
 
-    //todo: eventRepository 주입
+    //private final EventRepository eventRepository;
+    //private final BlackListRepository blackListRepository;
     public boolean isEventApplicable(Long eventId) {
         /*
 
@@ -30,6 +31,11 @@ public class ValidationService {
     }
 
     public boolean isWithinArea(double latitude, double longtitude) {
+        return true;
+    }
+
+    public boolean isUserBlacklist(String username){
+        //return blacklistRepository.findByUsername(username).isPresent();
         return true;
     }
 }
