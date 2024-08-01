@@ -29,7 +29,7 @@ public class LostService {
     private GetAdminLostDTO mapToAdminDTO(Lost lost) {
         return GetAdminLostDTO.builder()
                 .lostId(lost.getId())
-                //.userId(lost.getUsername()) //todo: FestaUser에서
+                .userId(lost.getFestaUser().getUsername()) //sub
                 .foundLocation(lost.getFoundLocation())
                 .storageLocation(lost.getStorageLocation())
                 .content(lost.getContent())
