@@ -105,12 +105,12 @@ public class AuthenticationController {
         }
         if (!validationService.isEventApplicable(eventId)) {
             return ResponseEntity
-                    .status(400)
+                    .status(404)
                     .body("응모가 불가능하다는 메시지");
         }
         else if (!validationService.isWithinArea(eventKakaoRequest.getLatitude(),eventKakaoRequest.getLongtitude())) {
             return ResponseEntity
-                    .status(400)
+                    .status(403)
                     .body("위치 검증에 실패했다는 메시지");
         }
         else {
