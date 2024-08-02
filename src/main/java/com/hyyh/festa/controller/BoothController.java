@@ -37,6 +37,12 @@ public class BoothController {
         return emitter;
     }
 
+    @GetMapping("/booth")
+    public ResponseDTO getBooth() {
+
+        return ResponseDTO.ok("주점 리스트 조회 성공", boothService.getBooth());
+    }
+
 }
 
 
