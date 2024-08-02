@@ -25,7 +25,7 @@ public class BoothService {
         return booth;
     }
 
-    public List<BoothGetResponse> getAllBooth() {
+    public List<BoothGetResponse> getBooths() {
         return boothRepository.findAll().stream().map(BoothGetResponse::of).collect(Collectors.toList());
     }
 }
