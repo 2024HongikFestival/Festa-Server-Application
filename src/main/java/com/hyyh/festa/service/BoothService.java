@@ -28,4 +28,8 @@ public class BoothService {
     public List<BoothGetResponse> getBooths() {
         return boothRepository.findAll().stream().map(BoothGetResponse::of).collect(Collectors.toList());
     }
+
+    public Booth getBooth(Long boothId) {
+        return boothRepository.findById(boothId).get();
+    }
 }

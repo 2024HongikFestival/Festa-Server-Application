@@ -1,5 +1,6 @@
 package com.hyyh.festa.controller;
 
+import com.hyyh.festa.dto.BoothGetResponse;
 import com.hyyh.festa.dto.BoothLikeRequest;
 import com.hyyh.festa.dto.BoothLikeResponse;
 import com.hyyh.festa.dto.ResponseDTO;
@@ -42,6 +43,12 @@ public class BoothController {
     public ResponseDTO getBooths() {
 
         return ResponseDTO.ok("주점 리스트 조회 성공", boothService.getBooths());
+    }
+
+    @GetMapping("/booths/{boothId}")
+    public ResponseDTO getBooth(@PathVariable("boothId") final Long boothId) {
+
+        return ResponseDTO.ok("주점 단건 조회 성공", BoothGetResponse.of(boothService.getBooth(boothId)));
     }
 }
 
