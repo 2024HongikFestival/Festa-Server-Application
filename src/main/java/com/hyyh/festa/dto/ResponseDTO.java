@@ -3,6 +3,8 @@ package com.hyyh.festa.dto;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+import java.util.Collections;
+
 @Getter
 public class ResponseDTO<T> {
 
@@ -27,7 +29,7 @@ public class ResponseDTO<T> {
         return new ResponseDTO<>(HttpStatus.BAD_REQUEST.value(), message, null);
     }
     public static <T> ResponseDTO<T> notFound(String message) {
-        return new ResponseDTO<>(HttpStatus.NOT_FOUND.value(), message, null);
+        return new ResponseDTO<>(HttpStatus.NOT_FOUND.value(), message, Collections.emptyMap());
     }
     public static <T> ResponseDTO<T> internalServerError(String message) {
         return new ResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), message, null);

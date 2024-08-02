@@ -4,10 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -15,6 +12,8 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 public class Event {
     @Id
     @GeneratedValue
@@ -35,4 +34,15 @@ public class Event {
     private LocalDateTime announcedAt;
 
     private String imageUrl;
+
+    public void updateEvent(String title, String prize, String requires,
+                            LocalDateTime startAt, LocalDateTime endAt, LocalDateTime announcedAt, String imageUrl){
+        this.title = title;
+        this.prize = prize;
+        this.requires = requires;
+        this.startAt = startAt;
+        this.endAt = endAt;
+        this.announcedAt = announcedAt;
+        this.imageUrl = imageUrl;
+    };
 }
