@@ -1,6 +1,7 @@
 package com.hyyh.festa.controller;
 
 import com.hyyh.festa.dto.BoothLikeRequest;
+import com.hyyh.festa.dto.BoothLikeResponse;
 import com.hyyh.festa.dto.ResponseDTO;
 import com.hyyh.festa.service.BoothService;
 import com.hyyh.festa.service.SseService;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,11 +23,10 @@ public class BoothController {
     private final SseService sseService;
 
 
-    @PostMapping("/booth/like")
-    public ResponseDTO likeBooth(@RequestBody final BoothLikeRequest likeBoothDto) {
+    @PostMapping("/booth/{boothId}/like")
+    public ResponseDTO likeBooth(@PathVariable("boothId") final Long boothId) {
 
-        boothService.likeBooth(likeBoothDto.boothName());
-        return ResponseDTO.ok("좋아요 성공", likeBoothDto.boothName());
+        return ResponseDTO.ok("주점 좋아요 반영 성공", BoothLikeResponse.of(boothService.likeBooth(boothId)));
     }
 
     // UTF-8 데이터만 보낼 수 있음, 바이너리 데이터 지원 x
@@ -40,7 +41,7 @@ public class BoothController {
     @GetMapping("/booth")
     public ResponseDTO getBooth() {
 
-        return ResponseDTO.ok("주점 리스트 조회 성공", boothService.getBooth());
+        return ResponseDTO.ok("주점 리스트 조회 성공", boothService.getAllBooth());
     }
 
 }

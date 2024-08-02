@@ -8,7 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BoothRepository extends JpaRepository<Booth, Long> {
 
-    Booth findByBoothName(String boothName);
-
     List<Booth> findAll();
 }

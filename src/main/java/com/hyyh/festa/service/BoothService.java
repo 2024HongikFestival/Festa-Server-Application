@@ -17,14 +17,15 @@ public class BoothService {
     private final SseService sseService;
 
     @Transactional
-    public void likeBooth(String boothName) {
-        Booth booth = boothRepository.findByBoothName(boothName);
+    public Booth likeBooth(Long boothId) {
+        Booth booth = boothRepository.findById(boothId).get();
         booth.plusLikeCount();
         sseService.sendEvents();
 
+        return booth;
     }
 
-    public List<BoothGetResponse> getBooth() {
+    public List<BoothGetResponse> getAllBooth() {
         return boothRepository.findAll().stream().map(BoothGetResponse::of).collect(Collectors.toList());
     }
 }
