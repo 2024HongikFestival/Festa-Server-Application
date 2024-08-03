@@ -1,19 +1,15 @@
 package com.hyyh.festa.controller;
 
-import com.hyyh.festa.dto.LostDTO;
 import com.hyyh.festa.dto.ResponseDTO;
 import com.hyyh.festa.service.LostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import com.hyyh.festa.dto.*;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -27,11 +23,25 @@ public class LostController {
     private final LostService lostService;
 
     @GetMapping
-    public ResponseEntity<?> getLosts(
+    public ResponseEntity<ResponseDTO<?>> getListLost(
             @RequestParam(required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-            @RequestParam(defaultValue = "0")int page){
+            @RequestParam(defaultValue = "0") int page,
+            @AuthenticationPrincipal UserDetails userDetails){
+        try {
+            Page<?> response;
+            if (userDetails != null && getAuthority(userDetails).equals("ADMIN")){
+                response = lostService.getListAdminLost(page, date);
+            } else {
+                response = lostService.getListUserLost(page, date);
+            }
 
-        return ResponseEntity.ok().body("TEST");
+            if (response.isEmpty()){
+                return ResponseEntity.status(404).body(ResponseDTO.notFound("분실물 게시글이 존재하지 않습니다."));
+            }
+            return ResponseEntity.ok(ResponseDTO.ok("분실물 목록 조회 성공"+ date, response));
+        } catch (Exception e){
+            return ResponseEntity.status(500).body(ResponseDTO.internalServerError("서버 내부 에러"+e));
+        }
     }
 
     @GetMapping("/{lostId}")
@@ -51,7 +61,7 @@ public class LostController {
                 return ResponseEntity.status(404).body(ResponseDTO.notFound("존재하지 않는 게시글입니다."));
             }
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(ResponseDTO.internalServerError("서버 내부 에러"));
+            return ResponseEntity.status(500).body(ResponseDTO.internalServerError("서버 내부 에러"+e));
         }
     }
 
