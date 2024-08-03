@@ -1,6 +1,7 @@
 package com.hyyh.festa.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,22 +21,20 @@ public class Lost {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "festa_user_id",nullable = false)
+    @JoinColumn(name = "festa_user_id")
     private FestaUser festaUser;
 
-    @Column(nullable = false)
+    @NotNull
     private String foundLocation;
 
-    @Column(nullable = false)
+    @NotNull
     private String storageLocation;
 
-    @Column(length = 100)
     private String content;
 
-    @Column(nullable = false)
+    @NotNull
     private String imageUrl;
 
     @CreatedDate
-    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 }
