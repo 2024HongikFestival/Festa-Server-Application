@@ -73,14 +73,6 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        // ‼️ for test
-        // ‼️ for test
-        AdminUser adminUser = AdminUser.builder()
-                .username("admin")
-                .password(passwordEncoder.encode("0000"))
-                .build();
-        adminUserRepository.save(adminUser);
-
         return username -> adminUserRepository
                 .findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("유저가 없다는 메시지"));
