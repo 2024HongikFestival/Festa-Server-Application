@@ -3,6 +3,7 @@ package com.hyyh.festa.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter @Setter
+@Getter
 public class Lost {
 
     @Id
@@ -18,7 +19,9 @@ public class Lost {
     @Column(name = "lost_id")
     private Long id;
 
-    //private FestaUser festaUser; //KAKAO OIDC sub
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "festa_user_id")
+    private FestaUser festaUser;
 
     private String foundLocation; //발견 장소
     private String storageLocation; //보관 장소

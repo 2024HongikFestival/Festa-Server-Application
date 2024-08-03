@@ -1,30 +1,31 @@
 package com.hyyh.festa.controller;
 
 import com.hyyh.festa.dto.LostDTO;
+import com.hyyh.festa.dto.ResponseDTO;
 import com.hyyh.festa.service.LostService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import com.hyyh.festa.dto.*;
 
 import java.time.LocalDate;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/losts")
 public class LostController {
 
-    @Autowired
-    private LostService lostService;
+    private final LostService lostService;
 
-    //[POST] 분실물 게시글 등록 api
-    @PostMapping
-    public ResponseEntity<?> createLost(@RequestBody LostDTO lostDTO){
-
-        return ResponseEntity.ok().body("TEST"); //구현시, ResponseDTO 객체가 들어가야함
-
-    }
-
-    //[GET] 분실물 게시글 리스트 조회 api
     @GetMapping
     public ResponseEntity<?> getLosts(
             @RequestParam(required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
@@ -33,21 +34,42 @@ public class LostController {
         return ResponseEntity.ok().body("TEST");
     }
 
-    //[GET] 분실물 게시글 단일 조회 api
     @GetMapping("/{lostId}")
-    public ResponseEntity<?> getOneLost(@PathVariable long lostId){
+    public ResponseEntity<ResponseDTO<?>> getOneLost(@PathVariable Long lostId,
+                                                     @AuthenticationPrincipal UserDetails userDetails){
 
-        return ResponseEntity.ok().body("TEST");
+            if (getAuthority(userDetails).equals("ADMIN")) {
+                try {
+                    Optional<GetAdminLostDTO> response = lostService.getOneAdminLost(lostId);
+                    if (response.isEmpty()) {
+                        return ResponseEntity.status(404).body(ResponseDTO.notFound("존재하지 않는 게시글입니다."));
+                    }
+                    else {
+                        return ResponseEntity.status(200).body(ResponseDTO.ok("분실물 게시글 단건 조회 성공", response));
+                    }
+                } catch (Exception e){
+                    return ResponseEntity.status(500).body(ResponseDTO.internalServerError("서버 내부 에러"));
+                }
+            }
+            else{
+                try {
+                    Optional<GetUserLostDTO> response = lostService.getOneUserLost(lostId);
+                    if (response.isEmpty()) {
+                        return ResponseEntity.status(404).body(ResponseDTO.notFound("존재하지 않는 게시글입니다."));
+                    }
+                    else {
+                        return ResponseEntity.status(200).body(ResponseDTO.ok("분실물 게시글 단건 조회 성공", response));
+                    }
+                } catch (Exception e){
+                    return ResponseEntity.status(500).body(ResponseDTO.internalServerError("서버 내부 에러"));
+                }
+            }
+        }
+
+    /*userDetails로부터 자격증명 가져오는 메서드*/
+    private String getAuthority(UserDetails userDetails) {
+        return userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining());
     }
-
-    //[DELETE] 분실물 게시글 삭제 api
-    @DeleteMapping("/{lostId}") //구현 방법 다시 생각해봐야 할 것 같다.
-    public ResponseEntity<?> deleteOneLost(@PathVariable long lostId){
-
-        return ResponseEntity.ok().body("TEST");
-    }
-
-
-
-
 }
