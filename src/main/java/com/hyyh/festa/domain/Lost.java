@@ -20,14 +20,22 @@ public class Lost {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "festa_user_id")
+    @JoinColumn(name = "festa_user_id",nullable = false)
     private FestaUser festaUser;
 
-    private String foundLocation; //발견 장소
-    private String storageLocation; //보관 장소
-    private String content; //본문
-    private String imageUrl; //사진 url
+    @Column(nullable = false)
+    private String foundLocation;
+
+    @Column(nullable = false)
+    private String storageLocation;
+
+    @Column(length = 100)
+    private String content;
+
+    @Column(nullable = false)
+    private String imageUrl;
 
     @CreatedDate
-    private LocalDateTime createdAt; //작성 시간
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 }
