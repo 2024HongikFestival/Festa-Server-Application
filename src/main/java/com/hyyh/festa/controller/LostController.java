@@ -36,35 +36,24 @@ public class LostController {
 
     @GetMapping("/{lostId}")
     public ResponseEntity<ResponseDTO<?>> getOneLost(@PathVariable Long lostId,
-                                                     @AuthenticationPrincipal UserDetails userDetails){
+                                                     @AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            Optional<?> response;
+            if (userDetails != null && getAuthority(userDetails).equals("ADMIN")) {
+                response = lostService.getOneAdminLost(lostId);
+            } else {
+                response = lostService.getOneUserLost(lostId);
+            }
 
-            if (getAuthority(userDetails).equals("ADMIN")) {
-                try {
-                    Optional<GetAdminLostDTO> response = lostService.getOneAdminLost(lostId);
-                    if (response.isEmpty()) {
-                        return ResponseEntity.status(404).body(ResponseDTO.notFound("존재하지 않는 게시글입니다."));
-                    }
-                    else {
-                        return ResponseEntity.status(200).body(ResponseDTO.ok("분실물 게시글 단건 조회 성공", response));
-                    }
-                } catch (Exception e){
-                    return ResponseEntity.status(500).body(ResponseDTO.internalServerError("서버 내부 에러"));
-                }
+            if (response.isPresent()) {
+                return ResponseEntity.ok(ResponseDTO.ok("분실물 게시글 단건 조회 성공", response.get()));
+            } else {
+                return ResponseEntity.status(404).body(ResponseDTO.notFound("존재하지 않는 게시글입니다."));
             }
-            else{
-                try {
-                    Optional<GetUserLostDTO> response = lostService.getOneUserLost(lostId);
-                    if (response.isEmpty()) {
-                        return ResponseEntity.status(404).body(ResponseDTO.notFound("존재하지 않는 게시글입니다."));
-                    }
-                    else {
-                        return ResponseEntity.status(200).body(ResponseDTO.ok("분실물 게시글 단건 조회 성공", response));
-                    }
-                } catch (Exception e){
-                    return ResponseEntity.status(500).body(ResponseDTO.internalServerError("서버 내부 에러"));
-                }
-            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(ResponseDTO.internalServerError("서버 내부 에러"));
         }
+    }
 
     /*userDetails로부터 자격증명 가져오는 메서드*/
     private String getAuthority(UserDetails userDetails) {
