@@ -32,4 +32,12 @@ public class BoothService {
     public Booth getBooth(Long boothId) {
         return boothRepository.findById(boothId).get();
     }
+
+    @Transactional
+    public void initalizeLikeCount() {
+        List<Booth> booths = boothRepository.findAll();
+        for (Booth booth : booths) {
+            booth.setLikeCount(0);
+        }
+    }
 }
