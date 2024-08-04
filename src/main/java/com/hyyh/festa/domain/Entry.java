@@ -14,10 +14,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
 public class Entry {
     @Id
     @GeneratedValue
-    @Getter
     private Long id;
 
     @ManyToOne

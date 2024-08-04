@@ -22,9 +22,9 @@ public class EventController {
     @PostMapping("/admin/events")
     public ResponseEntity<ResponseDTO<?>> createEvent(@RequestBody EventPostRequest eventPostRequest) {
         EventResponse createdEvent = eventService.createEvent(eventPostRequest);
-        ResponseDTO<?> responseDTO =ResponseDTO.ok("이벤트 생성 성공", createdEvent);
-        return ResponseEntity.status(200).body(responseDTO);
-    };
+        ResponseDTO<?> responseDTO =ResponseDTO.created("이벤트 생성 성공", createdEvent);
+        return ResponseEntity.status(201).body(responseDTO);
+    }
 
     @PatchMapping("/admin/events/{eventId}")
     public ResponseEntity<ResponseDTO<?>> updateEvent(@PathVariable Long eventId, @RequestBody EventPostRequest eventPostRequest) {
@@ -36,7 +36,7 @@ public class EventController {
             ResponseDTO<?> responseDTO = ResponseDTO.notFound(e.getMessage());
             return ResponseEntity.status(404).body(responseDTO);
         }
-    };
+    }
 
     @GetMapping("/events/{eventId}")
     public ResponseEntity<ResponseDTO<?>> getOneEvent(@PathVariable Long eventId) {
@@ -48,7 +48,7 @@ public class EventController {
             ResponseDTO<?> responseDTO = ResponseDTO.notFound(e.getMessage());
             return ResponseEntity.status(404).body(responseDTO);
         }
-    };
+    }
 
     @GetMapping("/events")
     public ResponseEntity<ResponseDTO<?>> getAllEvents() {
@@ -68,5 +68,5 @@ public class EventController {
             ResponseDTO<?> responseDTO = ResponseDTO.notFound(e.getMessage());
             return ResponseEntity.status(404).body(responseDTO);
         }
-    };
+    }
 }
