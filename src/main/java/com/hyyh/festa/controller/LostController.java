@@ -1,5 +1,6 @@
 package com.hyyh.festa.controller;
 
+import com.hyyh.festa.dto.ResponseDTO;
 import com.hyyh.festa.service.LostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -11,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -27,7 +29,7 @@ public class LostController {
             @RequestParam(defaultValue = "0") int page,
             @AuthenticationPrincipal UserDetails userDetails){
         try {
-            Page<?> response;
+            List<?> response;
             if (userDetails != null && getAuthority(userDetails).equals("ADMIN")){
                 response = lostService.getListAdminLost(page, date);
             } else {
@@ -37,7 +39,7 @@ public class LostController {
             if (response.isEmpty()){
                 return ResponseEntity.status(404).body(ResponseDTO.notFound("분실물 게시글이 존재하지 않습니다."));
             }
-            return ResponseEntity.ok(ResponseDTO.ok("분실물 목록 조회 성공"+ date, response));
+            return ResponseEntity.ok(ResponseDTO.ok("분실물 목록 조회 성공", response));
         } catch (Exception e){
             return ResponseEntity.status(500).body(ResponseDTO.internalServerError("서버 내부 에러"+e));
         }
