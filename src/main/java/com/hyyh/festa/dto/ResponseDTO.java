@@ -40,6 +40,7 @@ public class ResponseDTO<T> {
 
     public static <T> ResponseDTO<T> forbidden(String message) {
         return new ResponseDTO<>(HttpStatus.FORBIDDEN.value(), message, Collections.emptyMap());
+   
     }
 
     // 사용자 정의 HttpStatus 처리
