@@ -6,9 +6,18 @@ import com.hyyh.festa.dto.GetUserLostDTO;
 import com.hyyh.festa.repository.LostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +34,28 @@ public class LostService {
         return lostRepository.findById(lostId)
                 .map(this::mapToUserDTO);
     }
+
+    public Page<GetAdminLostDTO> getListAdminLost(int page, LocalDate date){
+        return getListLostItems(page, date, this::mapToAdminDTO);
+    }
+    public Page<GetUserLostDTO> getListUserLost(int page, LocalDate date){
+        return getListLostItems(page, date, this::mapToUserDTO);
+    }
+
+    private <T> Page<T> getListLostItems(int page, LocalDate date, Function<Lost, T> mapper) {
+        Pageable pageable = PageRequest.of(page, 12, Sort.by("createdAt").descending());
+
+        Page<Lost> lostPage;
+        if (date == null) {
+            lostPage = lostRepository.findAll(pageable);
+        } else {
+            LocalDateTime startOfDay = date.atStartOfDay();
+            LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
+            lostPage = lostRepository.findAllByCreatedAtBetween(startOfDay, endOfDay, pageable);
+        }
+        return lostPage.map(mapper);
+    }
+
 
     private GetAdminLostDTO mapToAdminDTO(Lost lost) {
         return GetAdminLostDTO.builder()
