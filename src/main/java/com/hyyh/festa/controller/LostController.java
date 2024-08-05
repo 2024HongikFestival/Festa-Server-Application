@@ -1,6 +1,5 @@
 package com.hyyh.festa.controller;
 
-import com.hyyh.festa.dto.ResponseDTO;
 import com.hyyh.festa.service.LostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
