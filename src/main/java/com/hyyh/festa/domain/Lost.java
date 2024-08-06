@@ -25,6 +25,10 @@ public class Lost {
     private FestaUser festaUser;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
+    private LostStatus lostStatus;
+
+    @NotNull
     private String foundLocation;
 
     @NotNull

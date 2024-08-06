@@ -1,5 +1,6 @@
 package com.hyyh.festa.dto;
 
+import com.hyyh.festa.domain.LostStatus;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -12,6 +13,8 @@ import java.time.LocalDateTime;
 public class GetAdminLostDTO {
 
     private Long lostId;
+    private LostStatus lostStatus;
+    private boolean isUserBlocked;
     private String userId;
     private String foundLocation;
     private String storageLocation;
