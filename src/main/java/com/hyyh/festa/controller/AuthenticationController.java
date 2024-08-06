@@ -1,10 +1,7 @@
 package com.hyyh.festa.controller;
 
 import com.hyyh.festa.domain.TokenType;
-import com.hyyh.festa.dto.EventKakaoRequest;
-import com.hyyh.festa.dto.KakaoLoginRequest;
-import com.hyyh.festa.dto.LoginRequest;
-import com.hyyh.festa.dto.TokenResponse;
+import com.hyyh.festa.dto.*;
 import com.hyyh.festa.jwt.JwtUtil;
 import com.hyyh.festa.oidc.KakaoErrorException;
 import com.hyyh.festa.service.AuthenticationService;
@@ -72,9 +69,12 @@ public class AuthenticationController {
         }
         return ResponseEntity
                 .status(200)
-                .body(new TokenResponse(
-                        "분실물 게시 토큰 발급",
-                        jwtUtil.generateToken(festaUser)));
+                .body(
+                        ResponseDTO.ok(
+                                "분실물 게시 인가 토큰 발급",
+                                new TokenDataResponse(jwtUtil.generateToken(festaUser))
+                        )
+                );
     }
 
     @PostMapping("/events/{eventId}/token")
