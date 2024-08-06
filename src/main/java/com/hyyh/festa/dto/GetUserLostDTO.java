@@ -14,7 +14,6 @@ public class GetUserLostDTO {
 
     private Long lostId;
     private LostStatus lostStatus;
-    private boolean isUserBlocked;
     private String foundLocation;
     private String storageLocation;
     private String content;

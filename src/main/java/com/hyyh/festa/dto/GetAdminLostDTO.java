@@ -14,8 +14,8 @@ public class GetAdminLostDTO {
 
     private Long lostId;
     private LostStatus lostStatus;
-    private boolean isUserBlocked;
     private String userId;
+    private boolean isUserBlocked;
     private String foundLocation;
     private String storageLocation;
     private String content;

@@ -60,7 +60,9 @@ public class LostService {
     private GetAdminLostDTO mapToAdminDTO(Lost lost) {
         return GetAdminLostDTO.builder()
                 .lostId(lost.getId())
+                .lostStatus(lost.getLostStatus())
                 .userId(lost.getFestaUser().getUsername()) //sub
+                //.isUserBlocked()
                 .foundLocation(lost.getFoundLocation())
                 .storageLocation(lost.getStorageLocation())
                 .content(lost.getContent())
