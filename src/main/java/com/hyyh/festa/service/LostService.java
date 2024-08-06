@@ -3,6 +3,7 @@ package com.hyyh.festa.service;
 import com.hyyh.festa.domain.Lost;
 import com.hyyh.festa.dto.GetAdminLostDTO;
 import com.hyyh.festa.dto.GetUserLostDTO;
+import com.hyyh.festa.repository.BlackListRepository;
 import com.hyyh.festa.repository.LostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,6 +25,8 @@ import java.util.stream.Collectors;
 public class LostService {
 
     private final LostRepository lostRepository;
+    private final BlackListRepository blackListRepository;
+    private final BlackListService blackListService;
 
     public Optional<GetAdminLostDTO> getOneAdminLost(Long lostId) {
         return lostRepository.findById(lostId)
@@ -35,34 +38,46 @@ public class LostService {
                 .map(this::mapToUserDTO);
     }
 
-    public List<GetAdminLostDTO> getListAdminLost(int page, LocalDate date){
-        return getListLostItems(page, date, this::mapToAdminDTO);
+    public List<GetAdminLostDTO> getListAdminLost(int page, LocalDate date, String kakaoSub){
+        return getListLostItems(page, date, kakaoSub, this::mapToAdminDTO);
     }
     public List<GetUserLostDTO> getListUserLost(int page, LocalDate date){
-        return getListLostItems(page, date, this::mapToUserDTO);
+
+        return getListLostItems(page, date,null, this::mapToUserDTO);
     }
 
-    private <T> List<T> getListLostItems(int page, LocalDate date, Function<Lost, T> mapper) {
+    private <T> List<T> getListLostItems(int page, LocalDate date, String kakaoSub, Function<Lost, T> mapper) {
         Pageable pageable = PageRequest.of(page, 12, Sort.by("createdAt").descending());
 
         List<Lost> lostList;
         if (date == null) {
-            lostList = lostRepository.findAll(pageable).getContent();
-        } else {
+            if (kakaoSub == null){
+                lostList = lostRepository.findAll(pageable).getContent();
+            } else{
+                lostList = lostRepository.findAllByFestaUserKakaoSub(kakaoSub, pageable).getContent();
+            }
+        }
+        else {
             LocalDateTime startOfDay = date.atStartOfDay();
             LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
-            lostList = lostRepository.findAllByCreatedAtBetween(startOfDay, endOfDay, pageable).getContent();
+            if(kakaoSub == null){
+                lostList = lostRepository.findAllByCreatedAtBetween(startOfDay, endOfDay, pageable).getContent();
+            } else{
+                lostList = lostRepository.findAllByCreatedAtBetweenAndFestaUserKakaoSub(startOfDay, endOfDay, kakaoSub, pageable).getContent();
+            }
         }
         return lostList.stream().map(mapper).collect(Collectors.toList());
     }
 
 
     private GetAdminLostDTO mapToAdminDTO(Lost lost) {
+        boolean isUserBlocked = blackListService.isUserBlocked(lost.getFestaUser().getUsername());
+
         return GetAdminLostDTO.builder()
                 .lostId(lost.getId())
-                .lostStatus(lost.getLostStatus())
+                .lostStatus(lost.getLostStatus()) //PUBLISHED, DELETED
                 .userId(lost.getFestaUser().getUsername()) //sub
-                //.isUserBlocked()
+                .isUserBlocked(isUserBlocked) //ture, fasle
                 .foundLocation(lost.getFoundLocation())
                 .storageLocation(lost.getStorageLocation())
                 .content(lost.getContent())
@@ -73,6 +88,7 @@ public class LostService {
     private GetUserLostDTO mapToUserDTO(Lost lost) {
         return GetUserLostDTO.builder()
                 .lostId(lost.getId())
+                .lostStatus(lost.getLostStatus())
                 .foundLocation(lost.getFoundLocation())
                 .storageLocation(lost.getStorageLocation())
                 .content(lost.getContent())

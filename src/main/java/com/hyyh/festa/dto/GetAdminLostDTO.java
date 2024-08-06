@@ -1,5 +1,6 @@
 package com.hyyh.festa.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hyyh.festa.domain.LostStatus;
 import lombok.*;
 
@@ -15,6 +16,7 @@ public class GetAdminLostDTO {
     private Long lostId;
     private LostStatus lostStatus;
     private String userId;
+    @JsonProperty("isUserBlocked")
     private boolean isUserBlocked;
     private String foundLocation;
     private String storageLocation;

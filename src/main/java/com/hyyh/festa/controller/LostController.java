@@ -27,11 +27,12 @@ public class LostController {
     public ResponseEntity<ResponseDTO<?>> getListLost(
             @RequestParam(required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestParam(defaultValue = "0") int page,
+            @RequestParam(required = false) String kakaoSub,
             @AuthenticationPrincipal UserDetails userDetails){
         try {
             List<?> response;
             if (userDetails != null && getAuthority(userDetails).equals("ADMIN")){
-                response = lostService.getListAdminLost(page, date);
+                response = lostService.getListAdminLost(page, date, kakaoSub);
             } else {
                 response = lostService.getListUserLost(page, date);
             }
