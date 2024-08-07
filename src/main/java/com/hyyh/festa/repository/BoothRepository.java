@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface BoothRepository extends JpaRepository<Booth, Long> {
 
     List<Booth> findAll();
+
+    List<Booth> findTop3ByOrderByLikeCountDesc();
 }
