@@ -16,4 +16,12 @@ public class ScheduledTasks {
     public void initLikeCount() {
         boothService.initalizeLikeCount();
     }
+
+    // 매 시간마다 실행
+    @Scheduled(cron = "0 0 * * * *")
+    public void setRankingTask() {
+        // 랭킹을 구합니다 .
+        boothService.setRankings();
+    }
+
 }
