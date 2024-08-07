@@ -1,6 +1,6 @@
 package com.hyyh.festa.service;
 
-import com.hyyh.festa.dto.BoothLikeResponse;
+import com.hyyh.festa.dto.BoothLikeSseResponse;
 import com.hyyh.festa.repository.BoothRepository;
 import java.io.IOException;
 import java.util.List;
@@ -29,7 +29,7 @@ public class SseService {
     public void sendEvents() {
         for (SseEmitter emitter : emitters) {
             try {
-                emitter.send(boothRepository.findAll().stream().map(BoothLikeResponse::of).collect(Collectors.toList()));
+                emitter.send(boothRepository.findAll().stream().map(BoothLikeSseResponse::of).collect(Collectors.toList()));
             } catch (IOException e) {
                 emitter.complete();
                 emitters.remove(emitter);
