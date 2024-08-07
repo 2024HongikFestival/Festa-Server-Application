@@ -20,7 +20,6 @@ public class BoothController {
     private final BoothService boothService;
     private final SseService sseService;
 
-
     @PostMapping("/booths/{boothId}/like")
     public ResponseDTO likeBooth(@PathVariable("boothId") final Long boothId) {
 
@@ -46,6 +45,12 @@ public class BoothController {
     public ResponseDTO getBooth(@PathVariable("boothId") final Long boothId) {
 
         return ResponseDTO.ok("주점 단건 조회 성공", BoothGetResponse.of(boothService.getBooth(boothId)));
+    }
+
+    @GetMapping("/booths/ranking")
+    public ResponseDTO getBoothRanking() {
+
+        return ResponseDTO.ok("주점 랭킹 조회 성공", boothService.getBoothsByRanking());
     }
 }
 
