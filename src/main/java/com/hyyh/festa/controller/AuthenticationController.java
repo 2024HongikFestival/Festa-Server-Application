@@ -23,17 +23,21 @@ public class AuthenticationController {
     public ResponseEntity<?> authenticateAdminUser(@RequestBody LoginRequest loginRequest) {
         UserDetails adminUser =
                 authenticationService.authenticateAdminUser(loginRequest.getUsername(), loginRequest.getPassword());
-        if (adminUser != null) {
-            return ResponseEntity
-                    .status(200)
-                    .body(new TokenResponse(
-                            "어드민 인가 토큰 발급",
-                            jwtUtil.generateToken(adminUser)));
-        } else {
+        if (adminUser == null) {
             return ResponseEntity
                     .status(401)
-                    .body("인증이 실패했다는 메시지");
+                    .body(
+                            ResponseDTO.unauthorized("어드민 인증 실패")
+                    );
         }
+        return ResponseEntity
+                .status(200)
+                .body(
+                        ResponseDTO.ok(
+                                "어드민 인가 토큰 발급",
+                                new TokenDataResponse(jwtUtil.generateToken(adminUser))
+                        )
+                );
     }
 
     @PostMapping("/losts/token")
@@ -53,19 +57,26 @@ public class AuthenticationController {
             else {
                 errorDesc = "예상치 못한 오류입니다.";
             }
+            String errorMessage = e.getMessage() + " - " + errorDesc;
             return ResponseEntity
                     .status(401)
-                    .body(e.getMessage() + "\n" + errorDesc);
+                    .body(
+                            ResponseDTO.unauthorized(errorMessage)
+                    );
         }
         if (festaUser == null) {
             return ResponseEntity
                     .status(401)
-                    .body("인증이 실패했다는 메시지");
+                    .body(
+                            ResponseDTO.unauthorized("일반 사용자 인증 실패")
+                    );
         }
         if (validationService.isUserBlacklist(festaUser.getUsername())) {
             return ResponseEntity
                     .status(400)
-                    .body("해당 사용자가 블랙리스트에 있습니다.");
+                    .body(
+                            ResponseDTO.unauthorized("차단된 사용자")
+                    );
         }
         return ResponseEntity
                 .status(200)
@@ -96,27 +107,40 @@ public class AuthenticationController {
             }
             return ResponseEntity
                     .status(401)
-                    .body(e.getMessage() + "\n" + errorDesc);
+                    .body(
+                            ResponseDTO.unauthorized(e.getMessage() + " - " + errorDesc)
+                    );
         }
         if (festaUser == null) {
             return ResponseEntity
                     .status(401)
-                    .body("인증이 실패했다는 메시지");
+                    .body(
+                            ResponseDTO.unauthorized("일반 사용자 인증 실패")
+                    );
         }
         if (!validationService.isEventApplicable(eventId)) {
             return ResponseEntity
                     .status(404)
-                    .body("응모가 불가능하다는 메시지");
+                    .body(
+                            ResponseDTO.notFound("새로 응모할 수 없음")
+                    );
         }
         else if (!validationService.isWithinArea(eventKakaoRequest.getLatitude(),eventKakaoRequest.getLongtitude())) {
             return ResponseEntity
                     .status(403)
-                    .body("위치 검증에 실패했다는 메시지");
+                    .body(
+                            ResponseDTO.forbidden("위치 확인 실패")
+                    );
         }
         else {
             return ResponseEntity
                     .status(200)
-                    .body(jwtUtil.generateToken(festaUser));
+                    .body(
+                            ResponseDTO.ok(
+                                    "이벤트 응모 인가 토큰 발급",
+                                    new TokenDataResponse(jwtUtil.generateToken(festaUser))
+                            )
+                    );
         }
     }
 }
