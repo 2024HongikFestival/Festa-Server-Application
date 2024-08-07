@@ -35,7 +35,7 @@ public class AuthenticationController {
                 .body(
                         ResponseDTO.ok(
                                 "어드민 인가 토큰 발급",
-                                new TokenDataResponse(jwtUtil.generateToken(adminUser))
+                                new TokenResponse(jwtUtil.generateToken(adminUser))
                         )
                 );
     }
@@ -83,7 +83,7 @@ public class AuthenticationController {
                 .body(
                         ResponseDTO.ok(
                                 "분실물 게시 인가 토큰 발급",
-                                new TokenDataResponse(jwtUtil.generateToken(festaUser))
+                                new TokenResponse(jwtUtil.generateToken(festaUser))
                         )
                 );
     }
@@ -138,7 +138,7 @@ public class AuthenticationController {
                     .body(
                             ResponseDTO.ok(
                                     "이벤트 응모 인가 토큰 발급",
-                                    new TokenDataResponse(jwtUtil.generateToken(festaUser))
+                                    new TokenResponse(jwtUtil.generateToken(festaUser))
                             )
                     );
         }
