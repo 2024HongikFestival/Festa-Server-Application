@@ -1,10 +1,7 @@
 package com.hyyh.festa.controller;
 
 import com.hyyh.festa.domain.TokenType;
-import com.hyyh.festa.dto.EventKakaoRequest;
-import com.hyyh.festa.dto.KakaoLoginRequest;
-import com.hyyh.festa.dto.LoginRequest;
-import com.hyyh.festa.dto.TokenResponse;
+import com.hyyh.festa.dto.*;
 import com.hyyh.festa.jwt.JwtUtil;
 import com.hyyh.festa.oidc.KakaoErrorException;
 import com.hyyh.festa.service.AuthenticationService;
@@ -95,28 +92,45 @@ public class AuthenticationController {
                 errorDesc = "예상치 못한 오류입니다.";
             }
             return ResponseEntity
-                    .status(401)
-                    .body(e.getMessage() + "\n" + errorDesc);
+                    .status(500)
+                    .body(
+                            ResponseDTO.internalServerError(e.getMessage() + "\n" + errorDesc)
+                    );
         }
         if (festaUser == null) {
             return ResponseEntity
-                    .status(401)
-                    .body("인증이 실패했다는 메시지");
+                    .status(403)
+                    .body(
+                            ResponseDTO.forbidden("인증에 실패했습니다.")
+                    );
         }
-        if (!validationService.isEventApplicable(eventId)) {
+        if (validationService.isEventApplicable(eventId, festaUser) == 'n') {
             return ResponseEntity
                     .status(404)
-                    .body("응모가 불가능하다는 메시지");
+                    .body(
+                            ResponseDTO.notFound("존재하지 않는 이벤트입니다.")
+                    );
         }
-        else if (!validationService.isWithinArea(eventKakaoRequest.getLatitude(),eventKakaoRequest.getLongtitude())) {
+        else if (validationService.isEventApplicable(eventId, festaUser) == 'd') {
+            return ResponseEntity
+                    .status(409)
+                    .body(
+                            ResponseDTO.forbidden("한 이벤트에 중복 응모할 수 없습니다.")
+                    );
+        }
+        else if (!validationService.isWithinArea(eventKakaoRequest.getLatitude(),eventKakaoRequest.getLongtitude(), 1)) {
             return ResponseEntity
                     .status(403)
-                    .body("위치 검증에 실패했다는 메시지");
+                    .body(
+                            ResponseDTO.badRequest("학교 바깥에서는 응모할 수 없습니다.")
+                    );
         }
         else {
             return ResponseEntity
                     .status(200)
-                    .body(jwtUtil.generateToken(festaUser));
+                    .body(
+                            new TokenResponse("토큰 생성 성공", jwtUtil.generateToken(festaUser))
+                    );
         }
     }
 }
