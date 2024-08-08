@@ -54,9 +54,14 @@ public class SecurityConfig {
                         .requestMatchers("/booth/*/like").hasAuthority("USER")
                         // todo: POST /losts 설정 (구현 이후 적용 가능)
 
+                        // 부스
+                        .requestMatchers("/booths").permitAll()
+                        .requestMatchers("/booths/**").permitAll()
+
                         // 그 외
                         .anyRequest().permitAll()
                 )
+
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
