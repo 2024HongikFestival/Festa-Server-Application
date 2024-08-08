@@ -38,32 +38,32 @@ public class LostService {
                 .map(this::mapToUserDTO);
     }
 
-    public List<GetAdminLostDTO> getListAdminLost(int page, LocalDate date, String kakaoSub){
-        return getListLostItems(page, date, kakaoSub, this::mapToAdminDTO);
+    public List<GetAdminLostDTO> getListAdminLost(int page, LocalDate date, String userId){
+        return getListLostItems(page, date, userId, this::mapToAdminDTO);
     }
     public List<GetUserLostDTO> getListUserLost(int page, LocalDate date){
 
         return getListLostItems(page, date,null, this::mapToUserDTO);
     }
 
-    private <T> List<T> getListLostItems(int page, LocalDate date, String kakaoSub, Function<Lost, T> mapper) {
+    private <T> List<T> getListLostItems(int page, LocalDate date, String userId, Function<Lost, T> mapper) {
         Pageable pageable = PageRequest.of(page, 12, Sort.by("createdAt").descending());
 
         List<Lost> lostList;
         if (date == null) {
-            if (kakaoSub == null){
+            if (userId == null){
                 lostList = lostRepository.findAll(pageable).getContent();
             } else{
-                lostList = lostRepository.findAllByFestaUserKakaoSub(kakaoSub, pageable).getContent();
+                lostList = lostRepository.findAllByFestaUserKakaoSub(userId, pageable).getContent();
             }
         }
         else {
             LocalDateTime startOfDay = date.atStartOfDay();
             LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
-            if(kakaoSub == null){
+            if(userId == null){
                 lostList = lostRepository.findAllByCreatedAtBetween(startOfDay, endOfDay, pageable).getContent();
             } else{
-                lostList = lostRepository.findAllByCreatedAtBetweenAndFestaUserKakaoSub(startOfDay, endOfDay, kakaoSub, pageable).getContent();
+                lostList = lostRepository.findAllByCreatedAtBetweenAndFestaUserKakaoSub(startOfDay, endOfDay, userId, pageable).getContent();
             }
         }
         return lostList.stream().map(mapper).collect(Collectors.toList());

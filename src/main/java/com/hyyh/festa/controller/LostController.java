@@ -3,7 +3,6 @@ package com.hyyh.festa.controller;
 import com.hyyh.festa.dto.ResponseDTO;
 import com.hyyh.festa.service.LostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,12 +26,12 @@ public class LostController {
     public ResponseEntity<ResponseDTO<?>> getListLost(
             @RequestParam(required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(required = false) String kakaoSub,
+            @RequestParam(required = false) String userId,
             @AuthenticationPrincipal UserDetails userDetails){
         try {
             List<?> response;
             if (userDetails != null && getAuthority(userDetails).equals("ADMIN")){
-                response = lostService.getListAdminLost(page, date, kakaoSub);
+                response = lostService.getListAdminLost(page, date, userId);
             } else {
                 response = lostService.getListUserLost(page, date);
             }

@@ -12,6 +12,6 @@ import java.time.LocalDateTime;
 public interface LostRepository extends JpaRepository<Lost, Long> {
 
     Page<Lost> findAllByCreatedAtBetween(LocalDateTime start, LocalDateTime end, Pageable pageable);
-    Page<Lost> findAllByCreatedAtBetweenAndFestaUserKakaoSub(LocalDateTime start, LocalDateTime end, String kakaoSub, Pageable pageable);
-    Page<Lost> findAllByFestaUserKakaoSub(String kakaoSub, Pageable pageable);
+    Page<Lost> findAllByCreatedAtBetweenAndFestaUserKakaoSub(LocalDateTime start, LocalDateTime end, String userId, Pageable pageable);
+    Page<Lost> findAllByFestaUserKakaoSub(String userId, Pageable pageable);
 }
