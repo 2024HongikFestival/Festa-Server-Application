@@ -64,7 +64,7 @@ public class LostAdminController {
                     "블랙 리스트 제거 성공", Collections.emptyMap());
             return ResponseEntity.status(204).body(responseDTO);
         } catch (IllegalArgumentException e) {
-            ResponseDTO<?> responseDTO = ResponseDTO.badRequest(e.getMessage());
+            ResponseDTO<?> responseDTO = ResponseDTO.notFound(e.getMessage());
             return ResponseEntity.status(404).body(responseDTO);
         }
     }
