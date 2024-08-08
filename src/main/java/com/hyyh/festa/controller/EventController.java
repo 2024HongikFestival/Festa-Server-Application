@@ -63,7 +63,7 @@ public class EventController {
             eventService.deleteEvent(eventId);
             ResponseDTO<?> responseDTO = ResponseDTO.custom(HttpStatus.NO_CONTENT,
                     "이벤트 삭제 성공", Collections.emptyMap());
-            return ResponseEntity.status(200).body(responseDTO);
+            return ResponseEntity.status(204).body(responseDTO);
         } catch (IllegalArgumentException e) {
             ResponseDTO<?> responseDTO = ResponseDTO.notFound(e.getMessage());
             return ResponseEntity.status(404).body(responseDTO);
