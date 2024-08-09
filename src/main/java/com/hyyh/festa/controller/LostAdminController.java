@@ -23,19 +23,19 @@ public class LostAdminController {
     private final LostService lostService;
     private final BlackListService blackListService;
 
-//    @PatchMapping("/losts/{lostId}")
-//    public ResponseEntity<ResponseDTO<?>> deleteEvent(@PathVariable Long lostId,
-//                                                      @AuthenticationPrincipal UserDetails userDetails) {
-//        try {
-//            lostService.deleteLost(userDetails, lostId);
-//            ResponseDTO<?> responseDTO = ResponseDTO.custom(HttpStatus.NO_CONTENT,
-//                    "분실물 게시글 삭제 성공", Collections.emptyMap());
-//            return ResponseEntity.status(204).body(responseDTO);
-//        } catch (IllegalArgumentException e) {
-//            ResponseDTO<?> responseDTO = ResponseDTO.notFound(e.getMessage());
-//            return ResponseEntity.status(404).body(responseDTO);
-//        }
-//    }
+    @PatchMapping("/losts/{lostId}")
+    public ResponseEntity<ResponseDTO<?>> deleteEvent(@PathVariable Long lostId,
+                                                      @AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            GetAdminLostDTO deletedLost = lostService.deleteLost(userDetails, lostId);
+            ResponseDTO<?> responseDTO = ResponseDTO.ok(
+                    "분실물 게시글 삭제 성공", deletedLost);
+            return ResponseEntity.status(200).body(responseDTO);
+        } catch (IllegalArgumentException e) {
+            ResponseDTO<?> responseDTO = ResponseDTO.notFound(e.getMessage());
+            return ResponseEntity.status(404).body(responseDTO);
+        }
+    }
 
     @PostMapping("/blacklist")
     public ResponseEntity<ResponseDTO<?>> addToBlackList(@RequestBody BlackListRequestDTO blackListRequestDTO) {
@@ -64,8 +64,16 @@ public class LostAdminController {
                     "블랙 리스트 제거 성공", Collections.emptyMap());
             return ResponseEntity.status(204).body(responseDTO);
         } catch (IllegalArgumentException e) {
-            ResponseDTO<?> responseDTO = ResponseDTO.notFound(e.getMessage());
-            return ResponseEntity.status(404).body(responseDTO);
+            String message = e.getMessage();
+            if (message.equals("존재하지 않는 분실물 게시판id")) {
+                ResponseDTO<?> responseDTO = ResponseDTO.notFound(e.getMessage());
+                return ResponseEntity.status(404).body(responseDTO);
+            } else if (message.equals("이미 삭제 상태입니다.")) {
+                ResponseDTO<?> responseDTO = ResponseDTO.badRequest(e.getMessage());
+                return ResponseEntity.status(400).body(responseDTO);
+            }
+            ResponseDTO<?> responseDTO = ResponseDTO.forbidden(e.getMessage());
+            return ResponseEntity.status(403).body(responseDTO);
         }
     }
 
