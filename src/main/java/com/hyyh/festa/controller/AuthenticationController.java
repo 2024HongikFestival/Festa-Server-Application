@@ -118,18 +118,25 @@ public class AuthenticationController {
                             ResponseDTO.unauthorized("일반 사용자 인증 실패")
                     );
         }
-        if (!validationService.isEventApplicable(eventId)) {
+        if (validationService.isEventApplicable(eventId, festaUser) == 'n') {
             return ResponseEntity
                     .status(404)
                     .body(
-                            ResponseDTO.notFound("새로 응모할 수 없음")
+                            ResponseDTO.notFound("존재하지 않는 이벤트입니다.")
                     );
         }
-        else if (!validationService.isWithinArea(eventKakaoRequest.getLatitude(),eventKakaoRequest.getLongtitude())) {
+        else if (validationService.isEventApplicable(eventId, festaUser) == 'd') {
+            return ResponseEntity
+                    .status(409)
+                    .body(
+                            ResponseDTO.forbidden("한 이벤트에 중복 응모할 수 없습니다.")
+                    );
+        }
+        else if (!validationService.isWithinArea(eventKakaoRequest.getLatitude(),eventKakaoRequest.getLongtitude(), 1)) {
             return ResponseEntity
                     .status(403)
                     .body(
-                            ResponseDTO.forbidden("위치 확인 실패")
+                            ResponseDTO.forbidden("학교 바깥에서는 응모할 수 없습니다.")
                     );
         }
         else {
