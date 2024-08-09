@@ -1,25 +1,35 @@
 package com.hyyh.festa.controller;
 
+import com.hyyh.festa.domain.FestaUser;
 import com.hyyh.festa.dto.EntryPostRequest;
 import com.hyyh.festa.dto.EntryResponse;
 import com.hyyh.festa.dto.ResponseDTO;
+import com.hyyh.festa.repository.FestaUserRepository;
 import com.hyyh.festa.service.EntryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
 public class EntryController {
 
     private final EntryService entryService;
+    private final FestaUserRepository festaUserRepository;
 
     @PostMapping("/events/{eventId}/entries")
     public ResponseEntity<ResponseDTO<?>> createEntry(@PathVariable Long eventId, @RequestBody EntryPostRequest entryPostRequest) {
         try{
-            EntryResponse createdEntry = entryService.createEntry(eventId, entryPostRequest);
+            FestaUser festaUser = festaUserRepository.findByKakaoSub(SecurityContextHolder.getContext().getAuthentication().getName()).orElse(null);
+            if (festaUser == null) {
+                ResponseDTO<?> responseDTO = ResponseDTO.notFound("토큰에서 festaUser를 찾는 중 오류가 발생했습니다.");
+                return ResponseEntity.status(404).body(responseDTO);
+            }
+            EntryResponse createdEntry = entryService.createEntry(eventId, festaUser, entryPostRequest);
             ResponseDTO<?> responseDTO = ResponseDTO.created("이벤트에 응모하기", createdEntry);
             return ResponseEntity.status(201).body(responseDTO);
         } catch (IllegalArgumentException e) {

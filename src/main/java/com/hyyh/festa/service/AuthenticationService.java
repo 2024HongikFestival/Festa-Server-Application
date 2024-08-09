@@ -65,8 +65,4 @@ public class AuthenticationService {
         }
         return festaUser;
     }
-
-    public boolean isEventApplicable(UserDetails festaUser, Long eventId) {
-        return true;
-    }
 }
