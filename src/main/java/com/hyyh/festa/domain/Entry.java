@@ -1,14 +1,8 @@
 package com.hyyh.festa.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Builder
@@ -20,7 +14,9 @@ public class Entry {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "event_id", nullable = true)
+    @Setter
     private Event event;
 
     @ManyToOne

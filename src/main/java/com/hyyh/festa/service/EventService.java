@@ -1,12 +1,12 @@
 package com.hyyh.festa.service;
 
-import com.hyyh.festa.controller.EventController;
+import com.hyyh.festa.domain.Entry;
 import com.hyyh.festa.domain.Event;
 import com.hyyh.festa.dto.EventPostRequest;
 import com.hyyh.festa.dto.EventResponse;
+import com.hyyh.festa.repository.EntryRepository;
 import com.hyyh.festa.repository.EventRepository;
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 public class EventService {
 
     private final EventRepository eventRepository;
+    private final EntryRepository entryRepository;
 
     public EventResponse createEvent(EventPostRequest eventPostRequest) {
         Event newEvent = Event.builder()
@@ -76,7 +77,11 @@ public class EventService {
     public void deleteEvent(Long eventId) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 이벤트id"));
-       eventRepository.delete(event);
+        List<Entry> allByEventId = entryRepository.findAllByEventId(eventId);
+        for (Entry entry : allByEventId) {
+            entry.setEvent(null);
+        }
+        eventRepository.delete(event);
     };
 
     private EventResponse toEventResponse(Event event) {
