@@ -22,10 +22,31 @@ public class FileService {
     private final S3Presigner s3Presigner;
 
     private static final String LOSTS_IMAGE_PREFIX = "uploads/losts/";
+    private static final String EVENT_PRIZE_IMAGE_PREFIX = "uploads/events/";
 
     public String getLostsPreSignedUrl() {
         String fileName = UUID.randomUUID().toString();
         String key = LOSTS_IMAGE_PREFIX + fileName;
+      
+        PutObjectRequest objectRequest = PutObjectRequest.builder()
+                .bucket(bucket)
+                .key(key)
+                .build();
+
+        PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
+                .signatureDuration(Duration.ofMinutes(15)) //유효기간 15분 (추후변경)
+                .putObjectRequest(objectRequest)
+                .build();
+
+        PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(presignRequest);
+
+        URL url = presignedRequest.url();
+        return url.toString();
+    }
+
+    public String getEventPreSignedUrl() {
+        String fileName = UUID.randomUUID().toString();
+        String key = EVENT_PRIZE_IMAGE_PREFIX + fileName;
 
         PutObjectRequest objectRequest = PutObjectRequest.builder()
                 .bucket(bucket)

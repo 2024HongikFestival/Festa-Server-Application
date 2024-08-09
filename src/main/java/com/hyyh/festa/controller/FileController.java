@@ -14,7 +14,7 @@ public class FileController {
     private final FileService fileService;
 
     @GetMapping("losts/up")
-    public ResponseEntity<ResponseDTO<Presigned>> getLostsPresignedUrl(){
+    public ResponseEntity<ResponseDTO<Presigned>> getLostsPresignedUrl() {
         String url = fileService.getLostsPreSignedUrl();
         Presigned presigned = new Presigned(url);
         return ResponseEntity
@@ -22,4 +22,12 @@ public class FileController {
                 .body(ResponseDTO.ok("S3 pre signed URL 발급 성공",presigned));
     }
 
+    @GetMapping("admin/events/up")
+    public ResponseEntity<ResponseDTO<Presigned>> getEventPresignedUrl() {
+        String url = fileService.getEventPreSignedUrl();
+        Presigned presigned = new Presigned(url);
+        return ResponseEntity
+                .status(200)
+                .body(ResponseDTO.ok("S3 pre signed URL 발급 성공",presigned));
+    }
 }
