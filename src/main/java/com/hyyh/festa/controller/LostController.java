@@ -1,5 +1,7 @@
 package com.hyyh.festa.controller;
 
+import com.hyyh.festa.dto.GetAdminLostDTO;
+import com.hyyh.festa.dto.LostRequestDTO;
 import com.hyyh.festa.dto.ResponseDTO;
 import com.hyyh.festa.service.LostService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,23 @@ import java.util.stream.Collectors;
 public class LostController {
 
     private final LostService lostService;
+
+    @PostMapping
+    public ResponseEntity<ResponseDTO<?>> createLost(@AuthenticationPrincipal UserDetails userDetails,
+                                                     @RequestBody LostRequestDTO lostRequestDTO) {
+        try {
+            GetAdminLostDTO createdLost = lostService.createLost(userDetails, lostRequestDTO);
+            ResponseDTO<?> responseDTO = ResponseDTO.created("분실물 게시글 생성 성공", createdLost);
+            return ResponseEntity.status(201).body(responseDTO);
+        } catch (IllegalArgumentException e) {
+            if (e.getMessage().equals("존재하지 않는 사용자id")) {
+                ResponseDTO<?> responseDTO = ResponseDTO.notFound(e.getMessage());
+                return ResponseEntity.status(404).body(responseDTO);
+            }
+            ResponseDTO<?> responseDTO = ResponseDTO.forbidden(e.getMessage());
+            return ResponseEntity.status(403).body(responseDTO);
+        }
+    }
 
     @GetMapping
     public ResponseEntity<ResponseDTO<?>> getListLost(
