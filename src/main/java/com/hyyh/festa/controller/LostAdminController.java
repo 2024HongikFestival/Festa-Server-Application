@@ -44,6 +44,10 @@ public class LostAdminController {
             ResponseDTO<?> responseDTO = ResponseDTO.created("블랙 리스트 추가 성공", createdBlackList);
             return ResponseEntity.status(201).body(responseDTO);
         } catch (IllegalArgumentException e) {
+            if (e.getMessage().equals("이미 블랙리스트에 존재하는 사용자")) {
+                ResponseDTO<?> responseDTO = ResponseDTO.badRequest(e.getMessage());
+                return ResponseEntity.status(400).body(responseDTO);
+            }
             ResponseDTO<?> responseDTO = ResponseDTO.notFound(e.getMessage());
             return ResponseEntity.status(404).body(responseDTO);
         }
