@@ -54,7 +54,6 @@ public class BoothService {
     }
 
     public List<BoothRankingGetResponse> getBoothsByRanking() {
-        System.out.println(rankings);
         return rankings.stream().map(BoothRankingGetResponse::of).collect(Collectors.toList());
     }
     public void setRankings() {
