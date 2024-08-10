@@ -8,6 +8,8 @@ import jakarta.annotation.PostConstruct;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +22,7 @@ public class BoothService {
 
     public List<Booth> rankings;
 
-    @PostConstruct
+    @EventListener(ApplicationReadyEvent.class)
     public void init() {
         // 컴포넌트 생성시 rankings 초기화
         rankings = boothRepository.findTop3ByOrderByLikeCountDesc();
@@ -28,7 +30,7 @@ public class BoothService {
 
     @Transactional
     public Booth likeBooth(Long boothId) {
-        Booth booth = boothRepository.findById(boothId).get();
+        Booth booth = boothRepository.findByIdForLikeCountUpdate(boothId);
         booth.plusLikeCount();
         sseService.sendEvents();
 
@@ -52,7 +54,7 @@ public class BoothService {
     }
 
     public List<BoothRankingGetResponse> getBoothsByRanking() {
-
+        System.out.println(rankings);
         return rankings.stream().map(BoothRankingGetResponse::of).collect(Collectors.toList());
     }
     public void setRankings() {
