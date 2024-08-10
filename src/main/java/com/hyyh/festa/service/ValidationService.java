@@ -1,6 +1,7 @@
 package com.hyyh.festa.service;
 
 import com.hyyh.festa.domain.Event;
+import com.hyyh.festa.repository.BlackListRepository;
 import com.hyyh.festa.repository.EntryRepository;
 import com.hyyh.festa.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ public class ValidationService {
 
     private final EventRepository eventRepository;
     private final EntryRepository entryRepository;
+    private final BlackListRepository blackListRepository;
 
     public char isEventApplicable(Long eventId, UserDetails festaUser) {
         Event event = eventRepository.findById(eventId).orElse(null);
@@ -46,7 +48,7 @@ public class ValidationService {
     }
 
     public boolean isUserBlacklist(String username){
-        return false;
+        return blackListRepository.existsByFestaUserKakaoSub(username);
     }
 }
 
