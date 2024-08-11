@@ -80,6 +80,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/booths").permitAll()
                         .requestMatchers(HttpMethod.GET, "/booths/*").permitAll()
                         .requestMatchers(HttpMethod.POST, "/booths/*/like").permitAll()
+                        .requestMatchers("/subscribe").permitAll()
 
                         // 그 외
                         .anyRequest().denyAll()
