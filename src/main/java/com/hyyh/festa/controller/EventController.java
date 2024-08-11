@@ -1,6 +1,5 @@
 package com.hyyh.festa.controller;
 
-import com.hyyh.festa.domain.Event;
 import com.hyyh.festa.dto.EventPostRequest;
 import com.hyyh.festa.dto.EventResponse;
 import com.hyyh.festa.dto.ResponseDTO;
