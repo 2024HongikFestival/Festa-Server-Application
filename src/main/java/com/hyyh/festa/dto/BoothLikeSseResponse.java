@@ -8,10 +8,10 @@ public record BoothLikeSseResponse(
 
         String boothName,
 
-        int likeCount
+        int totalLike
 
 ) {
     public static BoothLikeSseResponse of(Booth booth) {
-        return new BoothLikeSseResponse(booth.getId() ,booth.getBoothName(), booth.getLikeCount());
+        return new BoothLikeSseResponse(booth.getId() ,booth.getBoothName(), booth.getTotalLike());
     }
 }

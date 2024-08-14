@@ -8,10 +8,10 @@ public record BoothRankingGetResponse(
 
         String boothName,
 
-        int likeCount
+        int totalLike
 
 ) {
     public static BoothRankingGetResponse of(Booth booth) {
-        return new BoothRankingGetResponse(booth.getId() ,booth.getBoothName(), booth.getLikeCount());
+        return new BoothRankingGetResponse(booth.getId() ,booth.getBoothName(), booth.getTotalLike());
     }
 }

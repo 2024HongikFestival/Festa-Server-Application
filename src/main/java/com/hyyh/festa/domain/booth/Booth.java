@@ -22,15 +22,15 @@ public class Booth {
 
     private String boothName;
 
-    private int likeCount;
+    private int totalLike;
 
     @Builder
-    public Booth(String boothName, int likeCount) {
+    public Booth(String boothName, int totalLike) {
         this.boothName = boothName;
-        this.likeCount = likeCount;
+        this.totalLike = totalLike;
     }
 
     public void plusLikeCount() {
-        this.likeCount += 1;
+        this.totalLike += 1;
     }
 }
