@@ -1,6 +1,5 @@
 package com.hyyh.festa.service;
 
-import com.hyyh.festa.domain.booth.Booth;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Component;
 public class ScheduledTasks {
 
     private final BoothService boothService;
+    private final SseService sseService;
 
     @Scheduled(cron = "0 0 5 * * *")
     // 매일 오전 5시에 좋아요 초기화
@@ -22,6 +22,11 @@ public class ScheduledTasks {
     public void setRankingTask() {
         // 랭킹을 구합니다 .
         boothService.setRankings();
+    }
+
+    @Scheduled(fixedRate = 1000)
+    public void eventsInvoker() {
+        sseService.sendEvents();
     }
 
 }

@@ -1,17 +1,17 @@
 package com.hyyh.festa.service;
 
-import com.hyyh.festa.domain.booth.Booth;
+import com.hyyh.festa.domain.Booth;
 import com.hyyh.festa.dto.BoothGetResponse;
 import com.hyyh.festa.dto.BoothRankingGetResponse;
 import com.hyyh.festa.repository.BoothRepository;
-
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +32,7 @@ public class BoothService {
     public Booth likeBooth(Long boothId) {
         Booth booth = boothRepository.findByIdForLikeCountUpdate(boothId);
         booth.plusLikeCount();
-        sseService.sendEvents();
+        sseService.sendEventsBatched();
 
         return booth;
     }
