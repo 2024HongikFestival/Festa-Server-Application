@@ -51,7 +51,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH, "/admin/events/*").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/admin/events/*").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/admin/events/*/entries").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/admin/events/*/entries").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/admin/events/*/entries/*").hasAuthority("ADMIN")
 
                         // 어드민 - 분실물
                         .requestMatchers(HttpMethod.DELETE, "/admin/losts/*").hasAuthority("ADMIN")
