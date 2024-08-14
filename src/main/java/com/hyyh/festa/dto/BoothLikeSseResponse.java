@@ -1,6 +1,6 @@
 package com.hyyh.festa.dto;
 
-import com.hyyh.festa.domain.booth.Booth;
+import com.hyyh.festa.domain.Booth;
 
 public record BoothLikeSseResponse(
 
@@ -8,10 +8,16 @@ public record BoothLikeSseResponse(
 
         String boothName,
 
-        int totalLike
+        int totalLike,
+
+        int increasedLike
 
 ) {
     public static BoothLikeSseResponse of(Booth booth) {
-        return new BoothLikeSseResponse(booth.getId() ,booth.getBoothName(), booth.getTotalLike());
+        return new BoothLikeSseResponse(
+                booth.getId(),
+                booth.getBoothName(),
+                booth.getTotalLike(),
+                booth.getTotalLike() - booth.getPrevioudLike());
     }
 }

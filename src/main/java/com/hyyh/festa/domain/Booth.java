@@ -1,14 +1,10 @@
-package com.hyyh.festa.domain.booth;
+package com.hyyh.festa.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
@@ -23,6 +19,8 @@ public class Booth {
     private String boothName;
 
     private int totalLike;
+
+    private int previoudLike = 0;
 
     @Builder
     public Booth(String boothName, int totalLike) {
