@@ -62,8 +62,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/admin/blacklist/*").hasAuthority("ADMIN")
 
                         // 일반 사용자 - 인증
-                        .requestMatchers(HttpMethod.GET, "/losts/token").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/events/*/token").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/losts/token").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/events/*/token").permitAll()
 
                         // 일반 사용자 - 이벤트
                         .requestMatchers(HttpMethod.GET, "/events").permitAll()
