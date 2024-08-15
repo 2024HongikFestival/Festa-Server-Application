@@ -82,9 +82,14 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/booths/*/like").permitAll()
                         .requestMatchers("/subscribe").permitAll()
 
+                        // 부스
+                        .requestMatchers("/booths").permitAll()
+                        .requestMatchers("/booths/**").permitAll()
+
                         // 그 외
                         .anyRequest().denyAll()
                 )
+
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
@@ -101,13 +106,13 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        // ‼️ for test
-        // ‼️ for test
-        AdminUser adminUser = AdminUser.builder()
-                .username("admin")
-                .password(passwordEncoder.encode("0000"))
-                .build();
-        adminUserRepository.save(adminUser);
+//        // ‼️ for test
+//        // ‼️ for test
+//        AdminUser adminUser = AdminUser.builder()
+//                .username("admin")
+//                .password(passwordEncoder.encode("0000"))
+//                .build();
+//        adminUserRepository.save(adminUser);
 
         return username -> adminUserRepository
                 .findByUsername(username)
