@@ -28,9 +28,9 @@ public class LostAdminController {
                                                       @AuthenticationPrincipal UserDetails userDetails) {
         try {
             GetAdminLostDTO deletedLost = lostService.deleteLost(userDetails, lostId);
-            ResponseDTO<?> responseDTO = ResponseDTO.ok(
-                    "분실물 게시글 삭제 성공", deletedLost);
-            return ResponseEntity.status(200).body(responseDTO);
+            ResponseDTO<?> responseDTO = ResponseDTO.notFound(
+                    "분실물 게시글 삭제 성공");
+            return ResponseEntity.status(204).body(responseDTO);
         } catch (IllegalArgumentException e) {
             ResponseDTO<?> responseDTO = ResponseDTO.notFound(e.getMessage());
             return ResponseEntity.status(404).body(responseDTO);
