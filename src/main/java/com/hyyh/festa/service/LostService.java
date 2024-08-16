@@ -106,7 +106,6 @@ public class LostService {
     public GetAdminLostDTO deleteLost(UserDetails userDetails, Long lostId) {
         Lost lost = lostRepository.findById(lostId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 분실물 게시판id"));
-        System.out.println(userDetails.getAuthorities());
         if (getAuthority(userDetails).equals("ADMIN")) {
             if (lost.getLostStatus() != LostStatus.PUBLISHED)
                 throw new IllegalArgumentException("이미 삭제 상태입니다.");

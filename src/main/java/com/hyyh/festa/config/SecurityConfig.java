@@ -51,7 +51,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH, "/admin/events/*").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/admin/events/*").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/admin/events/*/entries").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/admin/events/*/entries").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/admin/events/*/entries/*").hasAuthority("ADMIN")
 
                         // 어드민 - 분실물
                         .requestMatchers(HttpMethod.DELETE, "/admin/losts/*").hasAuthority("ADMIN")
@@ -62,8 +62,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/admin/blacklist/*").hasAuthority("ADMIN")
 
                         // 일반 사용자 - 인증
-                        .requestMatchers(HttpMethod.GET, "/losts/token").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/events/*/token").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/losts/token").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/events/*/token").permitAll()
 
                         // 일반 사용자 - 이벤트
                         .requestMatchers(HttpMethod.GET, "/events").permitAll()
@@ -82,9 +82,14 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/booths/*/like").permitAll()
                         .requestMatchers("/subscribe").permitAll()
 
+                        // 부스
+                        .requestMatchers("/booths").permitAll()
+                        .requestMatchers("/booths/**").permitAll()
+
                         // 그 외
                         .anyRequest().denyAll()
                 )
+
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
@@ -101,6 +106,14 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+//        // ‼️ for test
+//        // ‼️ for test
+//        AdminUser adminUser = AdminUser.builder()
+//                .username("admin")
+//                .password(passwordEncoder.encode("0000"))
+//                .build();
+//        adminUserRepository.save(adminUser);
+
         return username -> adminUserRepository
                 .findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자가 존재하지 않습니다."));

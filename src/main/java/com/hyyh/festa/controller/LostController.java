@@ -4,6 +4,7 @@ import com.hyyh.festa.dto.GetAdminLostDTO;
 import com.hyyh.festa.dto.LostRequestDTO;
 import com.hyyh.festa.dto.ResponseDTO;
 import com.hyyh.festa.service.LostService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public class LostController {
 
     @PostMapping
     public ResponseEntity<ResponseDTO<?>> createLost(@AuthenticationPrincipal UserDetails userDetails,
-                                                     @RequestBody LostRequestDTO lostRequestDTO) {
+                                                     @Valid @RequestBody LostRequestDTO lostRequestDTO) {
         try {
             GetAdminLostDTO createdLost = lostService.createLost(userDetails, lostRequestDTO);
             ResponseDTO<?> responseDTO = ResponseDTO.created("분실물 게시글 생성 성공", createdLost);
