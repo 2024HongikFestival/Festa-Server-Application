@@ -6,6 +6,7 @@ import com.hyyh.festa.dto.GetAdminLostDTO;
 import com.hyyh.festa.dto.ResponseDTO;
 import com.hyyh.festa.service.BlackListService;
 import com.hyyh.festa.service.LostService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,7 @@ public class LostAdminController {
     }
 
     @PostMapping("/blacklist")
-    public ResponseEntity<ResponseDTO<?>> addToBlackList(@RequestBody BlackListRequestDTO blackListRequestDTO) {
+    public ResponseEntity<ResponseDTO<?>> addToBlackList(@Valid @RequestBody BlackListRequestDTO blackListRequestDTO) {
         try {
             BlackListResponseDTO createdBlackList = blackListService.addToBlackList(blackListRequestDTO);
             ResponseDTO<?> responseDTO = ResponseDTO.created("블랙 리스트 추가 성공", createdBlackList);

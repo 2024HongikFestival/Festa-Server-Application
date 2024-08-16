@@ -6,6 +6,7 @@ import com.hyyh.festa.dto.EntryResponse;
 import com.hyyh.festa.dto.ResponseDTO;
 import com.hyyh.festa.repository.FestaUserRepository;
 import com.hyyh.festa.service.EntryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,7 +22,7 @@ public class EntryController {
     private final FestaUserRepository festaUserRepository;
 
     @PostMapping("/events/{eventId}/entries")
-    public ResponseEntity<ResponseDTO<?>> createEntry(@PathVariable Long eventId, @RequestBody EntryPostRequest entryPostRequest) {
+    public ResponseEntity<ResponseDTO<?>> createEntry(@PathVariable Long eventId, @Valid @RequestBody EntryPostRequest entryPostRequest) {
         try{
             FestaUser festaUser = festaUserRepository.findByKakaoSub(SecurityContextHolder.getContext().getAuthentication().getName()).orElse(null);
             if (festaUser == null) {
