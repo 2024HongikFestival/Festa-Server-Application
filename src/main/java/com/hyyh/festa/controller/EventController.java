@@ -4,6 +4,7 @@ import com.hyyh.festa.dto.EventPostRequest;
 import com.hyyh.festa.dto.EventResponse;
 import com.hyyh.festa.dto.ResponseDTO;
 import com.hyyh.festa.service.EventService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class EventController {
     private final EventService eventService;
 
     @PostMapping("/admin/events")
-    public ResponseEntity<ResponseDTO<?>> createEvent(@RequestBody EventPostRequest eventPostRequest) {
+    public ResponseEntity<ResponseDTO<?>> createEvent(@Valid @RequestBody EventPostRequest eventPostRequest) {
         EventResponse createdEvent = eventService.createEvent(eventPostRequest);
         ResponseDTO<?> responseDTO =ResponseDTO.created("이벤트 생성 성공", createdEvent);
         return ResponseEntity.status(201).body(responseDTO);
