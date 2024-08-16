@@ -24,7 +24,7 @@ public class LostAdminController {
     private final BlackListService blackListService;
 
     @DeleteMapping("/losts/{lostId}")
-    public ResponseEntity<ResponseDTO<?>> deleteEvent(@PathVariable Long lostId,
+    public ResponseEntity<ResponseDTO<?>> deleteLost(@PathVariable Long lostId,
                                                       @AuthenticationPrincipal UserDetails userDetails) {
         try {
             GetAdminLostDTO deletedLost = lostService.deleteLost(userDetails, lostId);
