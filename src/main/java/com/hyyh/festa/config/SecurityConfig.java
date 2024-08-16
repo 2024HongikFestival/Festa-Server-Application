@@ -51,7 +51,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH, "/admin/events/*").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/admin/events/*").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/admin/events/*/entries").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/admin/events/*/entries").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/admin/events/*/entries/*").hasAuthority("ADMIN")
 
                         // 어드민 - 분실물
                         .requestMatchers(HttpMethod.DELETE, "/admin/losts/*").hasAuthority("ADMIN")
@@ -62,8 +62,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/admin/blacklist/*").hasAuthority("ADMIN")
 
                         // 일반 사용자 - 인증
-                        .requestMatchers(HttpMethod.GET, "/losts/token").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/events/*/token").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/losts/token").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/events/*/token").permitAll()
 
                         // 일반 사용자 - 이벤트
                         .requestMatchers(HttpMethod.GET, "/events").permitAll()
