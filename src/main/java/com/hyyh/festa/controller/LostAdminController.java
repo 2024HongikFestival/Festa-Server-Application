@@ -23,7 +23,7 @@ public class LostAdminController {
     private final LostService lostService;
     private final BlackListService blackListService;
 
-    @PatchMapping("/losts/{lostId}")
+    @DeleteMapping("/losts/{lostId}")
     public ResponseEntity<ResponseDTO<?>> deleteEvent(@PathVariable Long lostId,
                                                       @AuthenticationPrincipal UserDetails userDetails) {
         try {
