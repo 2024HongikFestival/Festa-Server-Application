@@ -45,15 +45,15 @@ public class LostController {
     @GetMapping
     public ResponseEntity<ResponseDTO<?>> getListLost(
             @RequestParam(required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(required = false) String userId,
             @AuthenticationPrincipal UserDetails userDetails){
         try {
             List<?> response;
             if (userDetails != null && getAuthority(userDetails).equals("ADMIN")){
-                response = lostService.getListAdminLost(page, date, userId);
+                response = lostService.getListAdminLost(page-1, date, userId);
             } else {
-                response = lostService.getListUserLost(page, date);
+                response = lostService.getListUserLost(page-1, date);
             }
 
             if (response.isEmpty()){

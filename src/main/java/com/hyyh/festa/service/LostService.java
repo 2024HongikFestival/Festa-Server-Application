@@ -81,7 +81,7 @@ public class LostService {
     }
 
     private <T> List<T> getListLostItems(int page, LocalDate date, String userId, Function<Lost, T> mapper) {
-        Pageable pageable = PageRequest.of(page, 12, Sort.by("createdAt").descending());
+        Pageable pageable = PageRequest.of(page, 9, Sort.by("createdAt").descending());
 
         List<Lost> lostList;
         if (date == null) {
