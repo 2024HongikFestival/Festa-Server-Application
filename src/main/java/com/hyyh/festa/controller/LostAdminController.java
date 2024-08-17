@@ -38,6 +38,18 @@ public class LostAdminController {
         }
     }
 
+    @PutMapping("/losts/{lostId}")
+    public ResponseEntity<ResponseDTO<?>> putLost(@PathVariable Long lostId,
+                                                  @AuthenticationPrincipal UserDetails userDetails){
+            try{
+                GetAdminLostDTO putLost = lostService.putLost(userDetails, lostId);
+                return ResponseEntity.status(200).body(ResponseDTO.ok("분실물 게시글 복구 성공",putLost));
+            } catch (IllegalArgumentException e) {
+                ResponseDTO<?> responseDTO = ResponseDTO.notFound(e.getMessage());
+                return ResponseEntity.status(404).body(responseDTO);
+            }
+    }
+
     @PostMapping("/blacklist")
     public ResponseEntity<ResponseDTO<?>> addToBlackList(@Valid @RequestBody BlackListRequestDTO blackListRequestDTO) {
         try {
