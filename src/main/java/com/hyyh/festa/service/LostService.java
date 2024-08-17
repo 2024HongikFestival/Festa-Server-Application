@@ -81,7 +81,7 @@ public class LostService {
     }
 
     private <T> List<T> getListLostItems(int page, LocalDate date, String userId, Function<Lost, T> mapper) {
-        Pageable pageable = PageRequest.of(page, 12, Sort.by("createdAt").descending());
+        Pageable pageable = PageRequest.of(page, 9, Sort.by("createdAt").descending());
 
         List<Lost> lostList;
         if (date == null) {
@@ -110,6 +110,20 @@ public class LostService {
             if (lost.getLostStatus() != LostStatus.PUBLISHED)
                 throw new IllegalArgumentException("이미 삭제 상태입니다.");
             lost.setLostStatus(LostStatus.DELETED);
+            lostRepository.save(lost);
+        } else {
+            throw new IllegalArgumentException("ADMIN이 아닙니다.");
+        }
+        return mapToAdminDTO(lost);
+    }
+
+    public GetAdminLostDTO putLost(UserDetails userDetails, Long lostId) {
+        Lost lost = lostRepository.findById(lostId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 분실물 게시판id"));
+        if (getAuthority(userDetails).equals("ADMIN")) {
+            if (lost.getLostStatus() != LostStatus.DELETED)
+                throw new IllegalArgumentException("이미 게시된 상태입니다.");
+            lost.setLostStatus(LostStatus.PUBLISHED);
             lostRepository.save(lost);
         } else {
             throw new IllegalArgumentException("ADMIN이 아닙니다.");
