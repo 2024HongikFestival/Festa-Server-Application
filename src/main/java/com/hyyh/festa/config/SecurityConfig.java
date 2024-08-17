@@ -55,6 +55,7 @@ public class SecurityConfig {
 
                         // 어드민 - 분실물
                         .requestMatchers(HttpMethod.DELETE, "/admin/losts/*").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/admin/losts/*").hasAuthority("ADMIN")
 
                         // 어드민 - 블랙리스트
                         .requestMatchers(HttpMethod.POST, "/admin/blacklist").hasAuthority("ADMIN")
