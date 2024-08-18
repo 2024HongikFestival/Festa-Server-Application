@@ -12,10 +12,7 @@ import com.hyyh.festa.repository.LostRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -86,7 +83,7 @@ public class LostService {
         List<Lost> lostList;
         if (date == null) {
             if (userId == null){
-                lostList = lostRepository.findAll(pageable).getContent();
+                lostList = lostRepository.findAllByLostStatus(LostStatus.PUBLISHED, pageable).getContent();
             } else{
                 lostList = lostRepository.findAllByFestaUserKakaoSub(userId, pageable).getContent();
             }
@@ -95,7 +92,7 @@ public class LostService {
             LocalDateTime startOfDay = date.atStartOfDay();
             LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
             if(userId == null){
-                lostList = lostRepository.findAllByCreatedAtBetween(startOfDay, endOfDay, pageable).getContent();
+                lostList = lostRepository.findAllByCreatedAtBetweenAndLostStatus(startOfDay, endOfDay, LostStatus.PUBLISHED, pageable).getContent();
             } else{
                 lostList = lostRepository.findAllByCreatedAtBetweenAndFestaUserKakaoSub(startOfDay, endOfDay, userId, pageable).getContent();
             }
