@@ -36,13 +36,18 @@ public class SseService {
 
     @Transactional
     public void sendEvents() {
+        List<BoothLikeSseResponse> boothLikeSseResponses = boothRepository.findAll().stream()
+                .map(BoothLikeSseResponse::of)
+                .toList();
+        boothRepository.findAll()
+                .forEach(booth -> booth.setPreviousLike(booth.getTotalLike()));
+
+        boothRepository.findAll()
+                .forEach(booth -> booth.setPreviousLike(booth.getTotalLike()));
+        this.latestEventSentAt = LocalDateTime.now();
         for (SseEmitter emitter : emitters) {
             try {
-                emitter.send(boothRepository.findAll().stream()
-                        .map(BoothLikeSseResponse::of)
-                        .collect(Collectors.toList()));
-                boothRepository.findAll()
-                        .forEach(booth -> booth.setPreviousLike(booth.getTotalLike()));
+                emitter.send(boothLikeSseResponses);
                 this.latestEventSentAt = LocalDateTime.now();
             } catch (IOException e) {
                 emitter.complete();
