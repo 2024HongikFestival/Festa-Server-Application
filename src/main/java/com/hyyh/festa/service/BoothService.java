@@ -49,6 +49,7 @@ public class BoothService {
     public void initalizeLikeCount() {
         List<Booth> booths = boothRepository.findAll();
         for (Booth booth : booths) {
+            booth.setPreviousLike(0);
             booth.setTotalLike(0);
         }
     }

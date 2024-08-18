@@ -20,7 +20,7 @@ public class Booth {
 
     private int totalLike;
 
-    private int previoudLike = 0;
+    private int previousLike = 0;
 
     @Builder
     public Booth(String boothName, int totalLike) {

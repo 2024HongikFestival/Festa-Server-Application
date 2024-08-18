@@ -1,9 +1,11 @@
 package com.hyyh.festa.controller;
 
 import com.hyyh.festa.dto.GetAdminLostDTO;
+import com.hyyh.festa.dto.LostPageResponse;
 import com.hyyh.festa.dto.LostRequestDTO;
 import com.hyyh.festa.dto.ResponseDTO;
 import com.hyyh.festa.service.LostService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +28,7 @@ public class LostController {
 
     @PostMapping
     public ResponseEntity<ResponseDTO<?>> createLost(@AuthenticationPrincipal UserDetails userDetails,
-                                                     @RequestBody LostRequestDTO lostRequestDTO) {
+                                                     @Valid @RequestBody LostRequestDTO lostRequestDTO) {
         try {
             GetAdminLostDTO createdLost = lostService.createLost(userDetails, lostRequestDTO);
             ResponseDTO<?> responseDTO = ResponseDTO.created("분실물 게시글 생성 성공", createdLost);
@@ -44,21 +46,26 @@ public class LostController {
     @GetMapping
     public ResponseEntity<ResponseDTO<?>> getListLost(
             @RequestParam(required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(required = false) String userId,
             @AuthenticationPrincipal UserDetails userDetails){
         try {
-            List<?> response;
+            List<?> losts;
+            int totalPage;
+
             if (userDetails != null && getAuthority(userDetails).equals("ADMIN")){
-                response = lostService.getListAdminLost(page, date, userId);
+                losts = lostService.getLostListByAdmin(page-1, date, userId);
+                totalPage = lostService.countTotalPage();
             } else {
-                response = lostService.getListUserLost(page, date);
+                losts = lostService.getLostListByUser(page-1, date);
+                totalPage = lostService.countPublishedTotalPage();
             }
 
-            if (response.isEmpty()){
+            if (losts.isEmpty()){
                 return ResponseEntity.status(404).body(ResponseDTO.notFound("분실물 게시글이 존재하지 않습니다."));
             }
-            return ResponseEntity.ok(ResponseDTO.ok("분실물 목록 조회 성공", response));
+
+            return ResponseEntity.ok(ResponseDTO.ok("분실물 목록 조회 성공", new LostPageResponse(page, totalPage, losts)));
         } catch (Exception e){
             return ResponseEntity.status(500).body(ResponseDTO.internalServerError("서버 내부 에러"+e));
         }
