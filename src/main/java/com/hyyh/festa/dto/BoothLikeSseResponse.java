@@ -18,6 +18,6 @@ public record BoothLikeSseResponse(
                 booth.getId(),
                 booth.getBoothName(),
                 booth.getTotalLike(),
-                booth.getTotalLike() - booth.getPrevioudLike());
+                booth.getTotalLike() - booth.getPreviousLike());
     }
 }

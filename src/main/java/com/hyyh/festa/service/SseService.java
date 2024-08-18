@@ -40,7 +40,7 @@ public class SseService {
                         .map(BoothLikeSseResponse::of)
                         .collect(Collectors.toList()));
                 boothRepository.findAll()
-                        .forEach(booth -> booth.setPrevioudLike(booth.getTotalLike()));
+                        .forEach(booth -> booth.setPreviousLike(booth.getTotalLike()));
                 this.latestEventSentAt = LocalDateTime.now();
             } catch (IOException e) {
                 emitter.complete();
@@ -57,6 +57,6 @@ public class SseService {
 
     private boolean isIncreasedLikeGreaterThen(int threshold) {
         return boothRepository.findAll().stream()
-                .anyMatch(booth -> booth.getTotalLike() - booth.getPrevioudLike() >= threshold);
+                .anyMatch(booth -> booth.getTotalLike() - booth.getPreviousLike() >= threshold);
     }
 }
