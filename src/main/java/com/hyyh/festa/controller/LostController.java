@@ -55,10 +55,10 @@ public class LostController {
 
             if (userDetails != null && getAuthority(userDetails).equals("ADMIN")){
                 losts = lostService.getLostListByAdmin(page-1, date, userId);
-                totalPage = lostService.countPublishedTotalPage();
+                totalPage = lostService.countTotalPage();
             } else {
                 losts = lostService.getLostListByUser(page-1, date);
-                totalPage = lostService.countTotalPage();
+                totalPage = lostService.countPublishedTotalPage();
             }
 
             if (losts.isEmpty()){
