@@ -97,7 +97,6 @@ public class LostService {
         Pageable pageable = PageRequest.of(page, pageItemCount, Sort.by("createdAt").descending());
 
         if (date == null) {
-            System.out.println("Here");
             return lostRepository.findAllByLostStatus(LostStatus.PUBLISHED, pageable).stream()
                     .map(this::mapToUserDTO)
                     .toList();
