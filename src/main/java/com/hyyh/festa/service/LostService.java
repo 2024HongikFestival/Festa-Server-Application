@@ -11,22 +11,17 @@ import com.hyyh.festa.repository.FestaUserRepository;
 import com.hyyh.festa.repository.LostRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.parameters.P;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,6 +33,8 @@ public class LostService {
     private final FestaUserRepository festaUserRepository;
     private final BlackListRepository blackListRepository;
     private final BlackListService blackListService;
+
+    private final int pageItemCount = 9;
 
     public GetAdminLostDTO createLost(UserDetails userDetails, LostRequestDTO lostRequestDTO) {
         String username = userDetails.getUsername();
@@ -72,35 +69,44 @@ public class LostService {
                 .map(this::mapToUserDTO);
     }
 
-    public List<GetAdminLostDTO> getListAdminLost(int page, LocalDate date, String userId){
-        return getListLostItems(page, date, userId, this::mapToAdminDTO);
-    }
-    public List<GetUserLostDTO> getListUserLost(int page, LocalDate date){
+    public List<GetAdminLostDTO> getLostListByAdmin(int page, LocalDate date, String userId){
+        Pageable pageable = PageRequest.of(page, pageItemCount, Sort.by("createdAt").descending());
+        List<GetAdminLostDTO> losts;
 
-        return getListLostItems(page, date,null, this::mapToUserDTO);
-    }
-
-    private <T> List<T> getListLostItems(int page, LocalDate date, String userId, Function<Lost, T> mapper) {
-        Pageable pageable = PageRequest.of(page, 9, Sort.by("createdAt").descending());
-
-        List<Lost> lostList;
         if (date == null) {
-            if (userId == null){
-                lostList = lostRepository.findAll(pageable).getContent();
-            } else{
-                lostList = lostRepository.findAllByFestaUserKakaoSub(userId, pageable).getContent();
-            }
+            losts = lostRepository.findAll(pageable).stream()
+                    .map(this::mapToAdminDTO)
+                    .toList();
+        } else {
+            LocalDateTime start = date.atStartOfDay();
+            LocalDateTime end = start.plusDays(1);
+
+            losts = lostRepository.findAllByCreatedAtBetween(start, end, pageable).stream()
+                    .map(this::mapToAdminDTO)
+                    .toList();
         }
-        else {
-            LocalDateTime startOfDay = date.atStartOfDay();
-            LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
-            if(userId == null){
-                lostList = lostRepository.findAllByCreatedAtBetween(startOfDay, endOfDay, pageable).getContent();
-            } else{
-                lostList = lostRepository.findAllByCreatedAtBetweenAndFestaUserKakaoSub(startOfDay, endOfDay, userId, pageable).getContent();
-            }
+
+        if (userId == null)
+            return losts;
+        return losts.stream()
+                .filter((lost) -> lost.getUserId().equals(userId))
+                .toList();
+    }
+
+    public List<GetUserLostDTO> getLostListByUser(int page, LocalDate date){
+        Pageable pageable = PageRequest.of(page, pageItemCount, Sort.by("createdAt").descending());
+
+        if (date == null) {
+            return lostRepository.findAllByLostStatus(LostStatus.PUBLISHED, pageable).stream()
+                    .map(this::mapToUserDTO)
+                    .toList();
+        } else {
+            LocalDateTime start = date.atStartOfDay();
+            LocalDateTime end = start.plusDays(1);
+            return lostRepository.findAllByLostStatusAndCreatedAtBetween(LostStatus.PUBLISHED, start, end, pageable).stream()
+                    .map(this::mapToUserDTO)
+                    .toList();
         }
-        return lostList.stream().map(mapper).collect(Collectors.toList());
     }
 
     public GetAdminLostDTO deleteLost(UserDetails userDetails, Long lostId) {
@@ -163,4 +169,19 @@ public class LostService {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining());
     }
+
+    public int countTotalPage() {
+        List<Lost> losts = lostRepository.findAll();
+        return roundPageCount(losts.size());
+    }
+
+    public int countPublishedTotalPage() {
+        List<Lost> losts = lostRepository.findAllByLostStatus(LostStatus.PUBLISHED);
+        return roundPageCount(losts.size());
+    }
+
+    private int roundPageCount(int itemCount) {
+        return itemCount / pageItemCount + (itemCount % pageItemCount != 0 ? 1 : 0);
+    }
+
 }
