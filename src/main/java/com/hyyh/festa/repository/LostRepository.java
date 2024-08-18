@@ -12,6 +12,7 @@ import java.util.List;
 @Repository
 public interface LostRepository extends JpaRepository<Lost, Long> {
     List<Lost> findAllByCreatedAtBetween(LocalDateTime start, LocalDateTime end, Pageable pageable);
+    List<Lost> findAllByLostStatus(LostStatus lostStatus);
     List<Lost> findAllByLostStatus(LostStatus lostStatus, Pageable pageable);
     List<Lost> findAllByLostStatusAndCreatedAtBetween(LostStatus lostStatus, LocalDateTime start, LocalDateTime end, Pageable pageable);
 }

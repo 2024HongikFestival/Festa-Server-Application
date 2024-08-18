@@ -172,7 +172,16 @@ public class LostService {
 
     public int countTotalPage() {
         List<Lost> losts = lostRepository.findAll();
-        return losts.size() / pageItemCount + (losts.size() % pageItemCount != 0 ? 1 : 0);
+        return roundPageCount(losts.size());
+    }
+
+    public int countPublishedTotalPage() {
+        List<Lost> losts = lostRepository.findAllByLostStatus(LostStatus.PUBLISHED);
+        return roundPageCount(losts.size());
+    }
+
+    private int roundPageCount(int itemCount) {
+        return itemCount / pageItemCount + (itemCount % pageItemCount != 0 ? 1 : 0);
     }
 
 }

@@ -51,17 +51,21 @@ public class LostController {
             @AuthenticationPrincipal UserDetails userDetails){
         try {
             List<?> losts;
+            int totalPage;
+
             if (userDetails != null && getAuthority(userDetails).equals("ADMIN")){
                 losts = lostService.getLostListByAdmin(page-1, date, userId);
+                totalPage = lostService.countPublishedTotalPage();
             } else {
                 losts = lostService.getLostListByUser(page-1, date);
+                totalPage = lostService.countTotalPage();
             }
 
             if (losts.isEmpty()){
                 return ResponseEntity.status(404).body(ResponseDTO.notFound("분실물 게시글이 존재하지 않습니다."));
             }
 
-            return ResponseEntity.ok(ResponseDTO.ok("분실물 목록 조회 성공", new LostPageResponse(page, lostService.countTotalPage(), losts)));
+            return ResponseEntity.ok(ResponseDTO.ok("분실물 목록 조회 성공", new LostPageResponse(page, totalPage, losts)));
         } catch (Exception e){
             return ResponseEntity.status(500).body(ResponseDTO.internalServerError("서버 내부 에러"+e));
         }
