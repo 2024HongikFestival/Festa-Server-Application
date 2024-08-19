@@ -109,11 +109,11 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
 //        // ‼️ for test
 //        // ‼️ for test
-        AdminUser adminUser = AdminUser.builder()
-                .username("admin")
-                .password(passwordEncoder.encode("0000"))
-                .build();
-        adminUserRepository.save(adminUser);
+//        AdminUser adminUser = AdminUser.builder()
+//                .username("admin")
+//                .password(passwordEncoder.encode("0000"))
+//                .build();
+//        adminUserRepository.save(adminUser);
 
         return username -> adminUserRepository
                 .findByUsername(username)
