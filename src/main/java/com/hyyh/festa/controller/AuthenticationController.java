@@ -88,11 +88,11 @@ public class AuthenticationController {
                 );
     }
 
-    @PostMapping("/events/{eventId}/token")
-    public ResponseEntity<?> authenticateEvent(@PathVariable Long eventId, @RequestBody EventKakaoRequest eventKakaoRequest) {
+    @PostMapping("/entries/token")
+    public ResponseEntity<?> authenticateEvent(@RequestBody EntryKakaoRequest entryKakaoRequest) {
         UserDetails festaUser;
         try {
-            festaUser = authenticationService.authenticateFestaUser(eventKakaoRequest.getCode(), TokenType.ENTRY);
+            festaUser = authenticationService.authenticateFestaUser(entryKakaoRequest.getCode(), TokenType.ENTRY);
         } catch (KakaoErrorException e) {
             String errorCode = e.getErrorCode();
             String errorDesc;
@@ -118,21 +118,14 @@ public class AuthenticationController {
                             ResponseDTO.unauthorized("일반 사용자 인증 실패")
                     );
         }
-        if (validationService.isEventApplicable(eventId, festaUser) == 'n') {
-            return ResponseEntity
-                    .status(404)
-                    .body(
-                            ResponseDTO.notFound("존재하지 않는 이벤트입니다.")
-                    );
-        }
-        else if (validationService.isEventApplicable(eventId, festaUser) == 'd') {
+        else if (!validationService.isEventApplicable(festaUser)) {
             return ResponseEntity
                     .status(409)
                     .body(
-                            ResponseDTO.forbidden("한 이벤트에 중복 응모할 수 없습니다.")
+                            ResponseDTO.forbidden("하루에 여러 번 응모할 수 없습니다.")
                     );
         }
-        else if (!validationService.isWithinArea(eventKakaoRequest.getLatitude(),eventKakaoRequest.getLongtitude(), 1)) {
+        else if (!validationService.isWithinArea(entryKakaoRequest.getLatitude(),entryKakaoRequest.getLongitude(), 1)) {
             return ResponseEntity
                     .status(403)
                     .body(

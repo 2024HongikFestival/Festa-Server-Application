@@ -50,8 +50,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/admin/events/up").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/admin/events/*").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/admin/events/*").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/admin/events/*/entries").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/admin/events/*/entries/*").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/admin/entries").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/admin/entries/*").hasAuthority("ADMIN")
 
                         // 어드민 - 분실물
                         .requestMatchers(HttpMethod.DELETE, "/admin/losts/*").hasAuthority("ADMIN")
@@ -64,12 +64,12 @@ public class SecurityConfig {
 
                         // 일반 사용자 - 인증
                         .requestMatchers(HttpMethod.POST, "/losts/token").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/events/*/token").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/entries/token").permitAll()
 
                         // 일반 사용자 - 이벤트
                         .requestMatchers(HttpMethod.GET, "/events").permitAll()
                         .requestMatchers(HttpMethod.GET, "/events/*").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/events/*/entries").hasAuthority("USER")
+                        .requestMatchers(HttpMethod.POST, "/entries").hasAuthority("USER")
 
                         // 일반 사용자 - 분실물
                         .requestMatchers(HttpMethod.POST, "/losts").hasAuthority("USER")
@@ -109,11 +109,11 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
 //        // ‼️ for test
 //        // ‼️ for test
-//        AdminUser adminUser = AdminUser.builder()
-//                .username("admin")
-//                .password(passwordEncoder.encode("0000"))
-//                .build();
-//        adminUserRepository.save(adminUser);
+        AdminUser adminUser = AdminUser.builder()
+                .username("admin")
+                .password(passwordEncoder.encode("0000"))
+                .build();
+        adminUserRepository.save(adminUser);
 
         return username -> adminUserRepository
                 .findByUsername(username)
