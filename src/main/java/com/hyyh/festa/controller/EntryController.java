@@ -21,15 +21,15 @@ public class EntryController {
     private final EntryService entryService;
     private final FestaUserRepository festaUserRepository;
 
-    @PostMapping("/events/{eventId}/entries")
-    public ResponseEntity<ResponseDTO<?>> createEntry(@PathVariable Long eventId, @Valid @RequestBody EntryPostRequest entryPostRequest) {
+    @PostMapping("/entries")
+    public ResponseEntity<ResponseDTO<?>> createEntry(@Valid @RequestBody EntryPostRequest entryPostRequest) {
         try{
             FestaUser festaUser = festaUserRepository.findByKakaoSub(SecurityContextHolder.getContext().getAuthentication().getName()).orElse(null);
             if (festaUser == null) {
                 ResponseDTO<?> responseDTO = ResponseDTO.notFound("토큰에서 festaUser를 찾는 중 오류가 발생했습니다.");
                 return ResponseEntity.status(404).body(responseDTO);
             }
-            EntryResponse createdEntry = entryService.createEntry(eventId, festaUser, entryPostRequest);
+            EntryResponse createdEntry = entryService.createEntry(festaUser, entryPostRequest);
             ResponseDTO<?> responseDTO = ResponseDTO.created("이벤트에 응모하기", createdEntry);
             return ResponseEntity.status(201).body(responseDTO);
         } catch (IllegalArgumentException e) {
@@ -38,11 +38,11 @@ public class EntryController {
         }
     }
 
-    @GetMapping("/admin/events/{eventId}/entries/{entryId}")
-    public ResponseEntity<ResponseDTO<?>> getEntryById(@PathVariable Long eventId, @PathVariable Long entryId) {
+    @GetMapping("/admin/entries/{entryId}")
+    public ResponseEntity<ResponseDTO<?>> getEntryById(@PathVariable Long entryId) {
         try {
-            EntryResponse entry = entryService.getEntryById(eventId, entryId);
-            ResponseDTO<?> responseDTO = ResponseDTO.ok("응모자 단건 조회 성공", entry);
+            EntryResponse entry = entryService.getEntryById(entryId);
+            ResponseDTO<?> responseDTO = ResponseDTO.ok("응모 단건 조회 성공", entry);
             return ResponseEntity.status(200).body(responseDTO);
         } catch (IllegalArgumentException e) {
             ResponseDTO<?> responseDTO = ResponseDTO.notFound(e.getMessage());
@@ -53,11 +53,11 @@ public class EntryController {
         }
     }
 
-    @GetMapping("/admin/events/{eventId}/entries")
-    public ResponseEntity<ResponseDTO<?>> getEntriesByEventId(@PathVariable Long eventId) {
+    @GetMapping("/admin/entries")
+    public ResponseEntity<ResponseDTO<?>> getEntriesByEventId(@RequestParam(value = "prize", required = false) String prize) {
         try {
-            List<EntryResponse> entries = entryService.getEntriesByEventId(eventId);
-            ResponseDTO<?> responseDTO = ResponseDTO.ok("응모자 리스트 조회 성공", entries);
+            List<EntryResponse> entries = entryService.getEntriesByPrize(prize);
+            ResponseDTO<?> responseDTO = ResponseDTO.ok("응모 목록 조회 성공", entries);
             return ResponseEntity.status(200).body(responseDTO);
         } catch (IllegalArgumentException e) {
             ResponseDTO<?> responseDTO = ResponseDTO.notFound(e.getMessage());

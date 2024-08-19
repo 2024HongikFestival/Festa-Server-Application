@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class EventKakaoRequest {
+public class EntryKakaoRequest {
 
     private String code;
     private double latitude;
-    private double longtitude;
+    private double longitude;
 }
