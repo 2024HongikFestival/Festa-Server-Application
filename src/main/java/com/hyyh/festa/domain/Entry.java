@@ -14,17 +14,21 @@ public class Entry {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "event_id", nullable = true)
-    @Setter
-    private Event event;
-
     @ManyToOne
     private FestaUser user;
 
     @NotNull
     private String name;
+
     @NotNull
     private String phone;
+
+    @NotNull
+    private Prize prize;
+
+    @NotNull
     private String comment;
+
+    @Setter
+    private int date;
 }
