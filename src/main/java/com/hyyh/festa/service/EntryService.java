@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class EntryService {
 
     private final EntryRepository entryRepository;
-    private static final LocalDateTime dayFirst = LocalDateTime.of(LocalDate.of(2024, 8, 19), LocalTime.of(10, 0));
+    private static final LocalDateTime dayFirst = LocalDateTime.of(LocalDate.of(2024, 9, 25), LocalTime.of(10, 0));
     private static final LocalDateTime daySecond = dayFirst.plusDays(1);
     private static final LocalDateTime dayThird = dayFirst.plusDays(2);
     private static final LocalDateTime due = LocalDateTime.of(LocalDate.from(dayFirst.plusDays(2)), LocalTime.of(23, 59));

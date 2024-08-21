@@ -18,7 +18,7 @@ public class ValidationService {
     private static final double HIU_LAT = 37.55073164533574;
     private static final double HIU_LON = 126.92549763193347;
     private static final int EARTH_RADIUS = 6371;
-    private static final LocalDateTime dayFirst = LocalDateTime.of(LocalDate.of(2024, 8, 19), LocalTime.of(10, 0));
+    private static final LocalDateTime dayFirst = LocalDateTime.of(LocalDate.of(2024, 9, 25), LocalTime.of(10, 0));
     private static final LocalDateTime daySecond = dayFirst.plusDays(1);
     private static final LocalDateTime dayThird = dayFirst.plusDays(2);
     private static final LocalDateTime due = LocalDateTime.of(LocalDate.from(dayFirst.plusDays(2)), LocalTime.of(23, 59));
