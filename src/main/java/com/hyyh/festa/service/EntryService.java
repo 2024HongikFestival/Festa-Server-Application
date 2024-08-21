@@ -45,6 +45,10 @@ public class EntryService {
                 newEntry.setDate(3);
             }
 
+            if (!entryRepository.findAllByUserAndDate(festaUser, newEntry.getDate()).isEmpty()) {
+                throw new IllegalStateException("하루에 여러 번 응모할 수 없습니다.");
+            }
+
             Entry savedEntry = entryRepository.save(newEntry);
             return toEntryResponse(savedEntry);
         } catch (IllegalArgumentException e) {

@@ -7,9 +7,12 @@ import com.hyyh.festa.oidc.KakaoErrorException;
 import com.hyyh.festa.service.AuthenticationService;
 import com.hyyh.festa.service.ValidationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
 import java.util.Objects;
 
 @RestController
@@ -122,7 +125,7 @@ public class AuthenticationController {
             return ResponseEntity
                     .status(409)
                     .body(
-                            ResponseDTO.forbidden("하루에 여러 번 응모할 수 없습니다.")
+                            ResponseDTO.custom(HttpStatus.CONFLICT, "하루에 여러 번 응모할 수 없습니다.", Collections.emptyMap())
                     );
         }
         else if (!validationService.isWithinArea(entryKakaoRequest.getLatitude(),entryKakaoRequest.getLongitude(), 1)) {

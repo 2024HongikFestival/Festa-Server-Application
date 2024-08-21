@@ -8,10 +8,12 @@ import com.hyyh.festa.repository.FestaUserRepository;
 import com.hyyh.festa.service.EntryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -35,6 +37,9 @@ public class EntryController {
         } catch (IllegalArgumentException e) {
             ResponseDTO<?> responseDTO = ResponseDTO.notFound(e.getMessage());
             return ResponseEntity.status(404).body(responseDTO);
+        } catch (IllegalStateException e) {
+            ResponseDTO<?> responseDTO = ResponseDTO.custom(HttpStatus.CONFLICT, e.getMessage(), Collections.emptyMap());
+            return ResponseEntity.status(409).body(responseDTO);
         }
     }
 
