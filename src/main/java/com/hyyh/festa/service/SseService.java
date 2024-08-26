@@ -1,5 +1,6 @@
 package com.hyyh.festa.service;
 
+import com.hyyh.festa.domain.Booth;
 import com.hyyh.festa.dto.BoothLikeSseResponse;
 import com.hyyh.festa.repository.BoothRepository;
 import lombok.RequiredArgsConstructor;
@@ -36,14 +37,18 @@ public class SseService {
 
     @Transactional
     public void sendEvents() {
-        List<BoothLikeSseResponse> boothLikeSseResponses = boothRepository.findAll().stream()
+
+        // Booth 엔티티를 한번만 조회하고, 조회한 결과를 캐싱
+        List<Booth> booths = boothRepository.findAll();
+
+        // BoothLikeSseResponse 객체 리스트를 생성
+        List<BoothLikeSseResponse> boothLikeSseResponses = booths.stream()
                 .map(BoothLikeSseResponse::of)
                 .toList();
-        boothRepository.findAll()
-                .forEach(booth -> booth.setPreviousLike(booth.getTotalLike()));
 
-        boothRepository.findAll()
-                .forEach(booth -> booth.setPreviousLike(booth.getTotalLike()));
+        // 모든 부스의 이전 like 값을 현재 like 값으로 갱신
+        booths.forEach(booth -> booth.setPreviousLike(booth.getTotalLike()));
+
         this.latestEventSentAt = LocalDateTime.now();
         for (SseEmitter emitter : emitters) {
             try {
