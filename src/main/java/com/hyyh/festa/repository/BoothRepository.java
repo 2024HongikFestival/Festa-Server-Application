@@ -13,8 +13,4 @@ public interface BoothRepository extends JpaRepository<Booth, Long> {
 
     List<Booth> findTop3ByOrderByTotalLikeDesc();
 
-    // Pessimistic Lock을 적용한 부스 조회
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT b FROM Booth b WHERE b.id = :boothId")
-    Booth findByIdForLikeCountUpdate(Long boothId);
 }

@@ -3,6 +3,7 @@ package com.hyyh.festa.service;
 import com.hyyh.festa.domain.Booth;
 import com.hyyh.festa.dto.BoothLikeSseResponse;
 import com.hyyh.festa.repository.BoothRepository;
+import java.util.Collection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -27,6 +28,7 @@ public class SseService {
 
     private final BoothRepository boothRepository;
 
+
     private LocalDateTime latestEventSentAt = LocalDateTime.now();
 
     public void addEmitter(SseEmitter emitter) {
@@ -38,8 +40,7 @@ public class SseService {
     @Transactional
     public void sendEvents() {
 
-        // Booth 엔티티를 한번만 조회하고, 조회한 결과를 캐싱
-        List<Booth> booths = boothRepository.findAll();
+        Collection<Booth> booths = BoothService.cachedBooths.values();
 
         // BoothLikeSseResponse 객체 리스트를 생성
         List<BoothLikeSseResponse> boothLikeSseResponses = booths.stream()
@@ -68,7 +69,8 @@ public class SseService {
     }
 
     private boolean isIncreasedLikeGreaterThen(int threshold) {
-        return boothRepository.findAll().stream()
+
+        return BoothService.cachedBooths.values().stream()
                 .anyMatch(booth -> booth.getTotalLike() - booth.getPreviousLike() >= threshold);
     }
 }
