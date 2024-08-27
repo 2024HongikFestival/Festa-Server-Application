@@ -31,4 +31,6 @@ public class Entry {
 
     @Setter
     private int date;
+
+    private boolean isWinner;
 }
