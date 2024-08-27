@@ -1,8 +1,10 @@
 package com.hyyh.festa.controller;
 
+import com.hyyh.festa.domain.Entry;
 import com.hyyh.festa.domain.FestaUser;
 import com.hyyh.festa.dto.EntryPostRequest;
 import com.hyyh.festa.dto.EntryResponse;
+import com.hyyh.festa.dto.GetAdminLostDTO;
 import com.hyyh.festa.dto.ResponseDTO;
 import com.hyyh.festa.repository.FestaUserRepository;
 import com.hyyh.festa.service.EntryService;
@@ -64,6 +66,19 @@ public class EntryController {
             List<EntryResponse> entries = entryService.getEntriesByPrize(prize);
             ResponseDTO<?> responseDTO = ResponseDTO.ok("응모 목록 조회 성공", entries);
             return ResponseEntity.status(200).body(responseDTO);
+        } catch (IllegalArgumentException e) {
+            ResponseDTO<?> responseDTO = ResponseDTO.notFound(e.getMessage());
+            return ResponseEntity.status(404).body(responseDTO);
+        }
+    }
+
+    @DeleteMapping("/admin/entries/{entryId}")
+    public ResponseEntity<ResponseDTO<?>> cancelWinner(@PathVariable Long entryId) {
+        try {
+            EntryResponse canceledWinner = entryService.cancelWinner(entryId);
+            ResponseDTO<?> responseDTO = ResponseDTO.notFound(
+                    "당첨 취소 성공");
+            return ResponseEntity.status(204).body(responseDTO);
         } catch (IllegalArgumentException e) {
             ResponseDTO<?> responseDTO = ResponseDTO.notFound(e.getMessage());
             return ResponseEntity.status(404).body(responseDTO);

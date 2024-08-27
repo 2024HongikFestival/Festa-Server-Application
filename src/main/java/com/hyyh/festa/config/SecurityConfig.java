@@ -52,6 +52,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/admin/events/*").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/admin/entries").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/admin/entries/*").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/admin/entries/*").hasAuthority("ADMIN")
 
                         // 어드민 - 분실물
                         .requestMatchers(HttpMethod.DELETE, "/admin/losts/*").hasAuthority("ADMIN")

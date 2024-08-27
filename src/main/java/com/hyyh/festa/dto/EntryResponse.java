@@ -16,4 +16,5 @@ public class EntryResponse {
     private String prize;
     private String comment;
     private int date;
+    private boolean isWinner;
 }
