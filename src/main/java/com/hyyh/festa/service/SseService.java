@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
@@ -33,14 +34,20 @@ public class SseService {
         emitter.onTimeout(() -> emitters.remove(emitter));
     }
 
+    @Transactional
     public void sendEvents() {
+        List<BoothLikeSseResponse> boothLikeSseResponses = boothRepository.findAll().stream()
+                .map(BoothLikeSseResponse::of)
+                .toList();
+        boothRepository.findAll()
+                .forEach(booth -> booth.setPreviousLike(booth.getTotalLike()));
+
+        boothRepository.findAll()
+                .forEach(booth -> booth.setPreviousLike(booth.getTotalLike()));
+        this.latestEventSentAt = LocalDateTime.now();
         for (SseEmitter emitter : emitters) {
             try {
-                emitter.send(boothRepository.findAll().stream()
-                        .map(BoothLikeSseResponse::of)
-                        .collect(Collectors.toList()));
-                boothRepository.findAll()
-                        .forEach(booth -> booth.setPreviousLike(booth.getTotalLike()));
+                emitter.send(boothLikeSseResponses);
                 this.latestEventSentAt = LocalDateTime.now();
             } catch (IOException e) {
                 emitter.complete();

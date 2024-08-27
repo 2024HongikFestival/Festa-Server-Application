@@ -11,8 +11,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class EntryResponse {
     private Long entryId;
-    private Long eventId;
     private String name;
     private String phone;
+    private String prize;
     private String comment;
+    private int date;
 }
