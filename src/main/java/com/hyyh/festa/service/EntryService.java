@@ -16,6 +16,9 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -71,6 +74,18 @@ public class EntryService {
                 .collect(Collectors.toList());
     }
 
+    public EntryResponse cancelWinner(Long entryId) {
+        Entry entry = entryRepository.findById(entryId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 응모id"));
+        if (!entry.isWinner()) {
+            throw new IllegalArgumentException("이 응모는 당첨되지 않았습니다.");
+        }
+        entry.setWinner(FALSE);
+        entryRepository.save(entry);
+
+        return toEntryResponse(entry);
+    }
+
     private EntryResponse toEntryResponse(Entry entry) {
         return EntryResponse.builder()
                 .entryId(entry.getId())
@@ -79,6 +94,7 @@ public class EntryService {
                 .prize(String.valueOf(entry.getPrize()))
                 .comment(entry.getComment())
                 .date(entry.getDate())
+                .isWinner(entry.isWinner())
                 .build();
     }
 }
