@@ -14,7 +14,11 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("https://www.2024hongikfestival.com:443", "http://localhost:3000", "http://127.0.0.1:3000")
+                        .allowedOrigins(
+                                "https://www.2024hongikfestival.com:443",
+                                "http://localhost:3000",
+                                "http://localhost:3001",
+                                "http://127.0.0.1:3000")
                         .allowedMethods("*")
                         .allowedHeaders("*")
                         .maxAge(3600);
