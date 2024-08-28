@@ -24,6 +24,7 @@ public class Entry {
     private String phone;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     private Prize prize;
 
     @NotNull
