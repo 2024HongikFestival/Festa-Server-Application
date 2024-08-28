@@ -72,6 +72,7 @@ public class SecurityConfig {
                         // 일반 사용자 - 이벤트
                         .requestMatchers(HttpMethod.GET, "/events").permitAll()
                         .requestMatchers(HttpMethod.GET, "/events/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/entries/prizes").permitAll()
                         .requestMatchers(HttpMethod.POST, "/entries").hasAuthority("USER")
 
                         // 일반 사용자 - 분실물
