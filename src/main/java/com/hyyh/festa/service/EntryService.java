@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static java.lang.Boolean.FALSE;
-
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -101,7 +99,7 @@ public class EntryService {
         if (!entry.isWinner()) {
             throw new IllegalArgumentException("이 응모는 당첨되지 않았습니다.");
         }
-        entry.setWinner(FALSE);
+        entry.setWinner(false);
         entryRepository.save(entry);
 
         return toEntryResponse(entry);
