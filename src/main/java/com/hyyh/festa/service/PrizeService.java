@@ -39,6 +39,31 @@ public class PrizeService {
         return drawWinners(entries, prizeEnum.quantity);
     }
 
+    public EntryResponse drawOneWinner(String prize) {
+        Prize prizeEnum;
+        try {
+            prizeEnum = Prize.valueOf(prize);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("존재하지 않는 경품입니다.");
+        }
+
+        List<Entry> allEntries = entryRepository.findAllByPrize(prizeEnum);
+
+        if (allEntries.stream().filter(Entry::isWinner).count() == prizeEnum.quantity) {
+            throw new IllegalArgumentException("이미 전체 추첨되었습니다.");
+        }
+
+        List<Entry> notWinnerEntries = allEntries.stream()
+                .filter(entry -> !entry.isWinner())
+                .collect(Collectors.toList());
+        if (notWinnerEntries.isEmpty()) {
+            throw new IllegalArgumentException("추첨 가능한 응모자가 없습니다.");
+        }
+
+        return drawWinners(notWinnerEntries, 1).get(0);
+    }
+
+
     private List<EntryResponse> drawWinners(List<Entry> entries, int quantity) {
         List<EntryResponse> winners = new ArrayList<>();
         Random random = new Random();

@@ -29,4 +29,16 @@ public class PrizeController {
             return ResponseEntity.status(404).body(responseDTO);
         }
     }
+
+    @PostMapping("/admin/draw-one")
+    public ResponseEntity<ResponseDTO<?>> drawOneWinner(@RequestParam("prize") String prize) {
+        try {
+            EntryResponse winner = prizeService.drawOneWinner(prize);
+            ResponseDTO<?> responseDTO = ResponseDTO.ok("1인 추가 추첨 성공", winner);
+            return ResponseEntity.status(200).body(responseDTO);
+        } catch (IllegalArgumentException e) {
+            ResponseDTO<?> responseDTO = ResponseDTO.notFound(e.getMessage());
+            return ResponseEntity.status(404).body(responseDTO);
+        }
+    }
 }
