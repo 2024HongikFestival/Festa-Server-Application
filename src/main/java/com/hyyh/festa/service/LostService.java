@@ -170,13 +170,27 @@ public class LostService {
                 .collect(Collectors.joining());
     }
 
-    public int countTotalPage() {
-        List<Lost> losts = lostRepository.findAll();
+    public int countTotalPage(LocalDate date) {
+        List<Lost> losts;
+        if (date == null) {
+            losts = lostRepository.findAll();
+        } else {
+            LocalDateTime start = date.atStartOfDay();
+            LocalDateTime end = start.plusDays(1);
+            losts = lostRepository.findAllByCreatedAtBetween(start, end);
+        }
         return roundPageCount(losts.size());
     }
 
-    public int countPublishedTotalPage() {
-        List<Lost> losts = lostRepository.findAllByLostStatus(LostStatus.PUBLISHED);
+    public int countPublishedTotalPage(LocalDate date) {
+        List<Lost> losts;
+        if (date == null) {
+            losts = lostRepository.findAllByLostStatus(LostStatus.PUBLISHED);
+        } else {
+            LocalDateTime start = date.atStartOfDay();
+            LocalDateTime end = start.plusDays(1);
+            losts = lostRepository.findAllByLostStatusAndCreatedAtBetween(LostStatus.PUBLISHED, start, end);
+        }
         return roundPageCount(losts.size());
     }
 
