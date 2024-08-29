@@ -1,7 +1,9 @@
 package com.hyyh.festa.service;
 
+import com.hyyh.festa.domain.Booth;
 import com.hyyh.festa.dto.BoothLikeSseResponse;
 import com.hyyh.festa.repository.BoothRepository;
+import java.util.Collection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -26,6 +28,7 @@ public class SseService {
 
     private final BoothRepository boothRepository;
 
+
     private LocalDateTime latestEventSentAt = LocalDateTime.now();
 
     public void addEmitter(SseEmitter emitter) {
@@ -36,14 +39,17 @@ public class SseService {
 
     @Transactional
     public void sendEvents() {
-        List<BoothLikeSseResponse> boothLikeSseResponses = boothRepository.findAll().stream()
+
+        Collection<Booth> booths = BoothService.cachedBooths.values();
+
+        // BoothLikeSseResponse 객체 리스트를 생성
+        List<BoothLikeSseResponse> boothLikeSseResponses = booths.stream()
                 .map(BoothLikeSseResponse::of)
                 .toList();
-        boothRepository.findAll()
-                .forEach(booth -> booth.setPreviousLike(booth.getTotalLike()));
 
-        boothRepository.findAll()
-                .forEach(booth -> booth.setPreviousLike(booth.getTotalLike()));
+        // 모든 부스의 이전 like 값을 현재 like 값으로 갱신
+        booths.forEach(booth -> booth.setPreviousLike(booth.getTotalLike()));
+
         this.latestEventSentAt = LocalDateTime.now();
         for (SseEmitter emitter : emitters) {
             try {
@@ -63,7 +69,8 @@ public class SseService {
     }
 
     private boolean isIncreasedLikeGreaterThen(int threshold) {
-        return boothRepository.findAll().stream()
+
+        return BoothService.cachedBooths.values().stream()
                 .anyMatch(booth -> booth.getTotalLike() - booth.getPreviousLike() >= threshold);
     }
 }

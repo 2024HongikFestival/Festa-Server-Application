@@ -37,19 +37,10 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // 인증, 인가 테스트
-                        .requestMatchers(HttpMethod.GET, "/test").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/test/admin").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/test/user").hasAuthority("USER")
-
                         // 어드민 - 인증
                         .requestMatchers(HttpMethod.POST, "/admin/token").permitAll()
 
                         // 어드민 - 이벤트
-                        .requestMatchers(HttpMethod.POST, "/admin/events").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/admin/events/up").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/admin/events/*").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/admin/events/*").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/admin/entries").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/admin/entries/*").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/admin/entries/*").hasAuthority("ADMIN")
@@ -111,14 +102,6 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-//        // ‼️ for test
-//        // ‼️ for test
-//        AdminUser adminUser = AdminUser.builder()
-//                .username("admin")
-//                .password(passwordEncoder.encode("0000"))
-//                .build();
-//        adminUserRepository.save(adminUser);
-
         return username -> adminUserRepository
                 .findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자가 존재하지 않습니다."));
