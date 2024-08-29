@@ -15,4 +15,8 @@ public interface EntryRepository extends JpaRepository<Entry, Long> {
     List<Entry> findAllByPrize(Prize prize);
 
     List<Entry> findAllByIsWinner(boolean isWinner);
+
+    Long countByPrize(Prize prize);
+
+    Long countByPrizeAndIsWinner(Prize prize, boolean isWinner);
 }

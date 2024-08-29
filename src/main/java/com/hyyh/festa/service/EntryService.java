@@ -105,6 +105,10 @@ public class EntryService {
         return toEntryResponse(entry);
     }
 
+    public boolean drawCompleted(Prize prize) {
+        return prize.quantity == entryRepository.countByPrizeAndIsWinner(prize, true);
+    }
+
     private EntryResponse toEntryResponse(Entry entry) {
         return EntryResponse.builder()
                 .entryId(entry.getId())
