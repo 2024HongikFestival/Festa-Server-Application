@@ -6,6 +6,7 @@ import com.hyyh.festa.dto.EntryPostRequest;
 import com.hyyh.festa.dto.EntryResponse;
 import com.hyyh.festa.dto.ResponseDTO;
 import com.hyyh.festa.dto.WinEntryResponse;
+import com.hyyh.festa.repository.EntryRepository;
 import com.hyyh.festa.repository.FestaUserRepository;
 import com.hyyh.festa.service.EntryService;
 import jakarta.validation.Valid;
@@ -22,6 +23,7 @@ import java.util.*;
 public class EntryController {
 
     private final EntryService entryService;
+    private final EntryRepository entryRepository;
     private final FestaUserRepository festaUserRepository;
 
     @PostMapping("/entries")
@@ -104,6 +106,23 @@ public class EntryController {
         List<WinEntryResponse> winningEntries = entryService.getWinningEntries();
 
         ResponseDTO<?> responseDTO = ResponseDTO.ok("당첨자 목록 조회 성공", winningEntries);
+        return ResponseEntity.status(200).body(responseDTO);
+    }
+
+    @GetMapping("/admin/entries/prizes")
+    public ResponseEntity<ResponseDTO<?>> getAdminPrizes() {
+        List<Map<String, Object>> prizeList = new ArrayList<>();
+
+        for (Prize p : Prize.values()) {
+            Map<String, Object> prizeInfo = new HashMap<>();
+            prizeInfo.put("prizeName", p.prizeName);
+            prizeInfo.put("quantity", p.quantity);
+            prizeInfo.put("entryCount", entryRepository.countByPrize(p));
+            prizeInfo.put("drawCompleted", entryService.drawCompleted(p));
+            prizeList.add(prizeInfo);
+        }
+
+        ResponseDTO<?> responseDTO = ResponseDTO.ok("경품 목록 조회 성공", prizeList);
         return ResponseEntity.status(200).body(responseDTO);
     }
 }
