@@ -43,6 +43,9 @@ public class SecurityConfig {
                         // 어드민 - 이벤트
                         .requestMatchers(HttpMethod.GET, "/admin/entries").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/admin/entries/*").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/admin/entries/*").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/admin/draw").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/admin/draw-one").hasAuthority("ADMIN")
 
                         // 어드민 - 분실물
                         .requestMatchers(HttpMethod.DELETE, "/admin/losts/*").hasAuthority("ADMIN")
@@ -58,6 +61,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/entries/token").permitAll()
 
                         // 일반 사용자 - 이벤트
+                        .requestMatchers(HttpMethod.GET, "/events").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/events/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/entries/prizes").permitAll()
                         .requestMatchers(HttpMethod.POST, "/entries").hasAuthority("USER")
 
                         // 일반 사용자 - 분실물

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class EntryResponse {
+public class WinEntryResponse {
     private Long entryId;
     private String name;
     private String phone;
@@ -17,4 +17,5 @@ public class EntryResponse {
     private String comment;
     private int date;
     private boolean isWinner;
+    private boolean duplicate;
 }

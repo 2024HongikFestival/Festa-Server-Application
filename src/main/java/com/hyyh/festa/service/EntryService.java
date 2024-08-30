@@ -5,6 +5,7 @@ import com.hyyh.festa.domain.FestaUser;
 import com.hyyh.festa.domain.Prize;
 import com.hyyh.festa.dto.EntryPostRequest;
 import com.hyyh.festa.dto.EntryResponse;
+import com.hyyh.festa.dto.WinEntryResponse;
 import com.hyyh.festa.repository.EntryRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,6 +37,7 @@ public class EntryService {
                     .phone(entryPostRequest.getPhone())
                     .prize(Prize.valueOf(entryPostRequest.getPrize()))
                     .comment(entryPostRequest.getComment())
+                    .isWinner(false)
                     .build();
             LocalDateTime now = LocalDateTime.now();
             if (now.isAfter(dayFirst) && now.isBefore(daySecond)) {
@@ -71,6 +74,41 @@ public class EntryService {
                 .collect(Collectors.toList());
     }
 
+    public List<WinEntryResponse> getWinningEntries() {
+        List<Entry> entries = entryRepository.findAllByIsWinner(true);
+
+        Map<FestaUser, List<Entry>> groupedByUser = entries.stream()
+                .collect(Collectors.groupingBy(Entry::getUser));
+
+        return entries.stream()
+                .map(entry -> {
+                    WinEntryResponse response = toWinEntryResponse(entry);
+                    if (groupedByUser.get(entry.getUser()).size() > 1) {
+                        response.setDuplicate(true);
+                    } else {
+                        response.setDuplicate(false);
+                    }
+                    return response;
+                })
+                .collect(Collectors.toList());
+    }
+
+    public EntryResponse cancelWinner(Long entryId) {
+        Entry entry = entryRepository.findById(entryId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 응모id"));
+        if (!entry.isWinner()) {
+            throw new IllegalArgumentException("이 응모는 당첨되지 않았습니다.");
+        }
+        entry.setWinner(false);
+        entryRepository.save(entry);
+
+        return toEntryResponse(entry);
+    }
+
+    public boolean drawCompleted(Prize prize) {
+        return prize.quantity == entryRepository.countByPrizeAndIsWinner(prize, true);
+    }
+
     private EntryResponse toEntryResponse(Entry entry) {
         return EntryResponse.builder()
                 .entryId(entry.getId())
@@ -79,6 +117,19 @@ public class EntryService {
                 .prize(String.valueOf(entry.getPrize()))
                 .comment(entry.getComment())
                 .date(entry.getDate())
+                .isWinner(entry.isWinner())
+                .build();
+    }
+
+    private WinEntryResponse toWinEntryResponse(Entry entry) {
+        return WinEntryResponse.builder()
+                .entryId(entry.getId())
+                .name(entry.getName())
+                .phone(entry.getPhone())
+                .prize(String.valueOf(entry.getPrize()))
+                .comment(entry.getComment())
+                .date(entry.getDate())
+                .isWinner(entry.isWinner())
                 .build();
     }
 }
