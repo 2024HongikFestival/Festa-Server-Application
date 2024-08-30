@@ -24,6 +24,7 @@ public class Entry {
     private String phone;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     private Prize prize;
 
     @NotNull
@@ -31,4 +32,7 @@ public class Entry {
 
     @Setter
     private int date;
+
+    @Setter
+    private boolean isWinner;
 }

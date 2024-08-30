@@ -1,9 +1,12 @@
 package com.hyyh.festa.controller;
 
 import com.hyyh.festa.domain.FestaUser;
+import com.hyyh.festa.domain.Prize;
 import com.hyyh.festa.dto.EntryPostRequest;
 import com.hyyh.festa.dto.EntryResponse;
 import com.hyyh.festa.dto.ResponseDTO;
+import com.hyyh.festa.dto.WinEntryResponse;
+import com.hyyh.festa.repository.EntryRepository;
 import com.hyyh.festa.repository.FestaUserRepository;
 import com.hyyh.festa.service.EntryService;
 import jakarta.validation.Valid;
@@ -13,14 +16,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
 public class EntryController {
 
     private final EntryService entryService;
+    private final EntryRepository entryRepository;
     private final FestaUserRepository festaUserRepository;
 
     @PostMapping("/entries")
@@ -43,6 +46,21 @@ public class EntryController {
         }
     }
 
+    @GetMapping("/entries/prizes")
+    public ResponseEntity<ResponseDTO<?>> getPrizes() {
+        List<Map<String, Object>> prizeList = new ArrayList<>();
+
+        for (Prize p : Prize.values()) {
+            Map<String, Object> prizeInfo = new HashMap<>();
+            prizeInfo.put("prizeName", p.prizeName);
+            prizeInfo.put("quantity", p.quantity);
+            prizeList.add(prizeInfo);
+        }
+
+        ResponseDTO<?> responseDTO = ResponseDTO.ok("경품 목록 조회 성공", prizeList);
+        return ResponseEntity.status(200).body(responseDTO);
+    }
+
     @GetMapping("/admin/entries/{entryId}")
     public ResponseEntity<ResponseDTO<?>> getEntryById(@PathVariable Long entryId) {
         try {
@@ -59,14 +77,52 @@ public class EntryController {
     }
 
     @GetMapping("/admin/entries")
-    public ResponseEntity<ResponseDTO<?>> getEntriesByEventId(@RequestParam(value = "prize", required = false) String prize) {
+    public ResponseEntity<ResponseDTO<?>> getEntriesByEventId(@RequestParam(value = "prize", required = true) String prize) {
         try {
             List<EntryResponse> entries = entryService.getEntriesByPrize(prize);
             ResponseDTO<?> responseDTO = ResponseDTO.ok("응모 목록 조회 성공", entries);
             return ResponseEntity.status(200).body(responseDTO);
         } catch (IllegalArgumentException e) {
+            ResponseDTO<?> responseDTO = ResponseDTO.notFound("존재하지 않는 경품입니다.");
+            return ResponseEntity.status(404).body(responseDTO);
+        }
+    }
+
+    @DeleteMapping("/admin/entries/{entryId}")
+    public ResponseEntity<ResponseDTO<?>> cancelWinner(@PathVariable Long entryId) {
+        try {
+            EntryResponse canceledWinner = entryService.cancelWinner(entryId);
+            ResponseDTO<?> responseDTO = ResponseDTO.notFound(
+                    "당첨 취소 성공");
+            return ResponseEntity.status(204).body(responseDTO);
+        } catch (IllegalArgumentException e) {
             ResponseDTO<?> responseDTO = ResponseDTO.notFound(e.getMessage());
             return ResponseEntity.status(404).body(responseDTO);
         }
+    }
+
+    @GetMapping("/admin/entries/winners")
+    public ResponseEntity<ResponseDTO<?>> getWinners() {
+        List<WinEntryResponse> winningEntries = entryService.getWinningEntries();
+
+        ResponseDTO<?> responseDTO = ResponseDTO.ok("당첨자 목록 조회 성공", winningEntries);
+        return ResponseEntity.status(200).body(responseDTO);
+    }
+
+    @GetMapping("/admin/entries/prizes")
+    public ResponseEntity<ResponseDTO<?>> getAdminPrizes() {
+        List<Map<String, Object>> prizeList = new ArrayList<>();
+
+        for (Prize p : Prize.values()) {
+            Map<String, Object> prizeInfo = new HashMap<>();
+            prizeInfo.put("prizeName", p.prizeName);
+            prizeInfo.put("quantity", p.quantity);
+            prizeInfo.put("entryCount", entryRepository.countByPrize(p));
+            prizeInfo.put("drawCompleted", entryService.drawCompleted(p));
+            prizeList.add(prizeInfo);
+        }
+
+        ResponseDTO<?> responseDTO = ResponseDTO.ok("경품 목록 조회 성공", prizeList);
+        return ResponseEntity.status(200).body(responseDTO);
     }
 }
