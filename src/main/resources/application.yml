@@ -1,16 +1,18 @@
 spring:
   datasource:
-    url: ${MY_SQL_HONGIK_FESTA_TEST_URL}
-    username: ${MY_SQL_HONGIK_FESTA_TEST_USERNAME}
-    password: ${MY_SQL_HONGIK_FESTA_TEST_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:h2:tcp://localhost/~/test
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
 
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true
 
-  jackson:
-    time-zone: Asia/Seoul
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.orm.jdbc.bind: trace
