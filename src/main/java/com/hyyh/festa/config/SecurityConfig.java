@@ -37,6 +37,10 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // 인증 테스트
+                        .requestMatchers(HttpMethod.GET, "/test/user").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/test/admin").hasRole("ADMIN")
+
                         // 어드민 - 인증
                         .requestMatchers(HttpMethod.POST, "/admin/token").permitAll()
 

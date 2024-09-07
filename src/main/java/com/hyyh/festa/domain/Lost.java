@@ -39,6 +39,7 @@ public class Lost {
     private String content;
 
     @NotNull
+    @Lob
     private String imageUrl;
 
     @CreatedDate
