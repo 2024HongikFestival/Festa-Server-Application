@@ -22,7 +22,6 @@ public class EntryPostRequest {
     @NotBlank(message = "상품을 선택해야 합니다.")
     private String prize;
 
-    @NotBlank(message = "후기를 작성해주세요.")
     @Size(max = 100, message = "후기는 최대 100글자까지 입력할 수 있습니다.")
     private String comment;
 }

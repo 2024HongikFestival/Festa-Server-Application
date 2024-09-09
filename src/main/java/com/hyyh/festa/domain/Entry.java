@@ -27,7 +27,6 @@ public class Entry {
     @Enumerated(EnumType.STRING)
     private Prize prize;
 
-    @NotNull
     private String comment;
 
     @Setter
