@@ -1,9 +1,7 @@
 package com.hyyh.festa.domain;
 
 public enum Prize {
-    A("에어팟", 5),
-    B("변신로봇", 3),
-    C("장검", 7),
+    티빙구독권("티빙 구독권", 10),
     ;
 
     public final String prizeName;
