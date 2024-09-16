@@ -1,9 +1,6 @@
 package com.hyyh.festa.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
@@ -22,11 +19,8 @@ public class Booth {
 
     private int previousLike = 0;
 
-    @Builder
-    public Booth(String boothName, int totalLike) {
-        this.boothName = boothName;
-        this.totalLike = totalLike;
-    }
+    @Enumerated(EnumType.STRING)
+    private BoothPart boothPart;
 
     public void plusLikeCount() {
         this.totalLike += 1;

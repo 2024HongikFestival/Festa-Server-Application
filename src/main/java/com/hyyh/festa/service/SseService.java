@@ -1,6 +1,7 @@
 package com.hyyh.festa.service;
 
 import com.hyyh.festa.domain.Booth;
+import com.hyyh.festa.domain.BoothPart;
 import com.hyyh.festa.dto.BoothLikeSseResponse;
 import com.hyyh.festa.repository.BoothRepository;
 import java.util.Collection;
@@ -13,7 +14,9 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
@@ -41,11 +44,15 @@ public class SseService {
     public void sendEvents() {
 
         Collection<Booth> booths = BoothService.cachedBooths.values();
+        Map<String, List<BoothLikeSseResponse>> response = new HashMap<>();
 
         // BoothLikeSseResponse 객체 리스트를 생성
-        List<BoothLikeSseResponse> boothLikeSseResponses = booths.stream()
-                .map(BoothLikeSseResponse::of)
-                .toList();
+        for (BoothPart boothPart: BoothPart.values()) {
+            response.put(boothPart.getValue(), booths.stream()
+                    .filter(b -> b.getBoothPart() == boothPart)
+                    .map(BoothLikeSseResponse::of)
+                    .toList());
+        }
 
         // 모든 부스의 이전 like 값을 현재 like 값으로 갱신
         booths.forEach(booth -> booth.setPreviousLike(booth.getTotalLike()));
@@ -53,7 +60,7 @@ public class SseService {
         this.latestEventSentAt = LocalDateTime.now();
         for (SseEmitter emitter : emitters) {
             try {
-                emitter.send(boothLikeSseResponses);
+                emitter.send(response);
                 this.latestEventSentAt = LocalDateTime.now();
             } catch (IOException e) {
                 emitter.complete();
