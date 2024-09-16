@@ -6,18 +6,12 @@ public record BoothLikeSseResponse(
 
         Long boothId,
 
-        String boothName,
-
-        int totalLike,
-
-        int increasedLike
+        int totalLike
 
 ) {
     public static BoothLikeSseResponse of(Booth booth) {
         return new BoothLikeSseResponse(
                 booth.getId(),
-                booth.getBoothName(),
-                booth.getTotalLike(),
-                booth.getTotalLike() - booth.getPreviousLike());
+                booth.getTotalLike());
     }
 }
