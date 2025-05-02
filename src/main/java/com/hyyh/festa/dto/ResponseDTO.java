@@ -1,0 +1,49 @@
+package com.hyyh.festa.dto;
+
+import lombok.Getter;
+import org.springframework.http.HttpStatus;
+
+import java.util.Collections;
+
+@Getter
+public class ResponseDTO<T> {
+
+    private final int status;
+    private final String message;
+    private final Object data;
+
+    private ResponseDTO(int status, String message, Object data) {
+        this.status = status;
+        this.message = message;
+        this.data = data;
+    }
+
+    // 기본적인 HttpStatus 처리
+    public static <T> ResponseDTO<T> ok(String message, T data) {
+        return new ResponseDTO<>(HttpStatus.OK.value(), message, data);
+    }
+    public static <T> ResponseDTO<T> created(String message, T data) {
+        return new ResponseDTO<>(HttpStatus.CREATED.value(), message, data);
+    }
+    public static <T> ResponseDTO<T> badRequest(String message) {
+        return new ResponseDTO<>(HttpStatus.BAD_REQUEST.value(), message, Collections.emptyMap());
+    }
+    public static <T> ResponseDTO<T> notFound(String message) {
+        return new ResponseDTO<>(HttpStatus.NOT_FOUND.value(), message, Collections.emptyMap());
+    }
+    public static <T> ResponseDTO<T> internalServerError(String message) {
+        return new ResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), message, Collections.emptyMap());
+    }
+    public static <T> ResponseDTO<T> unauthorized(String message) {
+        return new ResponseDTO<>(HttpStatus.UNAUTHORIZED.value(), message, Collections.emptyMap());
+    }
+
+    public static <T> ResponseDTO<T> forbidden(String message) {
+        return new ResponseDTO<>(HttpStatus.FORBIDDEN.value(), message, Collections.emptyMap());
+    }
+
+    // 사용자 정의 HttpStatus 처리
+    public static <T> ResponseDTO<T> custom(HttpStatus status, String message, T data) {
+        return new ResponseDTO<>(status.value(), message, data);
+    }
+}
